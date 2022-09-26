@@ -22,7 +22,7 @@
 """
 import os
 
-       
+
 from anypytools import AnyPyProcess
 from anypytools import macro_commands as mc
 
@@ -30,10 +30,18 @@ from anypytools import macro_commands as mc
 # NOTE: Log files are automatically deleted unless the model fails.
 os.makedirs("BatchProcessingLogs", exist_ok=True)
 
+# Process options for the batch processing
+app_opts = {
+    # Run only one paralllel process in github actions to avoid memory problems
+    "num_processes": 1 if os.environ.get("CI") else 3,
+    "ignore_errors": [".anyset"],
+}
+
+
 #%% Process all standing reference trials
 macro = [mc.Load("Main.any"), mc.OperationRun("Main.RunParameterIdentification")]
 
-app = AnyPyProcess(num_processes=3)
+app = AnyPyProcess(**app_opts)
 app.start_macro(
     macro,
     search_subdirs=r".*_StandingRef[\\/]Main.any",
@@ -49,7 +57,9 @@ macro = [
     mc.OperationRun("Main.RunAnalysis.MarkerTracking"),
 ]
 
-app = AnyPyProcess(num_processes=3, ignore_errors=[".anyset"])
+nproc = 1 if os.environ.get("GITHUB_ACTIONS") else 3
+
+app = AnyPyProcess(**app_opts)
 app.start_macro(
     macro,
     search_subdirs=r"Subjects.+Gait.+Main.any",
@@ -68,10 +78,9 @@ macro = [
     # Add more output here
 ]
 
-app = AnyPyProcess(num_processes=3, ignore_errors=[".anyset"])
+app = AnyPyProcess(**app_opts)
 results = app.start_macro(
     macro,
     search_subdirs=r"Subjects.+Gait.+Main.any",
     logfile="BatchProcessingLogs/InverseDynamics.txt",
 )
-
