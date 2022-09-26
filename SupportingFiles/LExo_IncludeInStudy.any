@@ -1,0 +1,79 @@
+// Export Exo Joint positions in marker tracking
+Studies.MarkerTracking.JointAngleOutputs = {
+  AnyOutputFile OutputFile_LExoFull = {
+    FileName = TEMP_PATH + "/" + MOCAP_TEST_FILENAME_PREFIX + MOCAP_OUTPUT_FILENAME_PREFIX + Main.ModelSetup.TrialSpecificData.TrialFileName + "-euler-LExo-full.txt";
+    SepSign = ",";
+    SepSpaceAutoOnOff = Off;
+    Header.TitleSectionOnOff = Off;
+    Header.ConstSectionOnOff = Off;
+    Header.ConstSectionSaveOptionsOnOff = Off;
+    Header.VarSectionOnOff = Off;
+    
+    AnyVector Rot_LExo_Ankle = ..Exoskeleton.Left.Mates.Ankle_Joint.Pos;
+    AnyVector Rot_LExo_Knee = ..Exoskeleton.Left.Mates.Knee_Joint.Pos;
+  };
+  
+  AnyOutputFile OutputFile_LExoShankFull = {
+    FileName = TEMP_PATH + MOCAP_TEST_FILENAME_PREFIX + MOCAP_OUTPUT_FILENAME_PREFIX + Main.ModelSetup.TrialSpecificData.TrialFileName + "-euler-LExoshank-full.txt";
+    SepSign = ",";
+    SepSpaceAutoOnOff = Off;
+    Header.TitleSectionOnOff = Off;
+    Header.ConstSectionOnOff = Off;
+    Header.ConstSectionSaveOptionsOnOff = Off;
+    Header.VarSectionOnOff = Off;
+    
+    AnyVector ShankPosX = ..Exoskeleton.Left.ShankPosition.ShankPosX.Pos;
+    AnyVector ShankPosY = ..Exoskeleton.Left.ShankPosition.ShankPosY.Pos;
+    AnyVector ShankPosZ = ..Exoskeleton.Left.ShankPosition.ShankPosZ.Pos;
+    AnyVector ShankRotX = ..Exoskeleton.Left.ShankPosition.ShankRotX.Pos;
+    AnyVector ShankRotY = ..Exoskeleton.Left.ShankPosition.ShankRotY.Pos;
+    AnyVector ShankRotZ = ..Exoskeleton.Left.ShankPosition.ShankRotZ.Pos;
+    
+  };
+};
+
+// Import Exo Joint positions as drivers in inverse dynamics
+Studies.InverseDynamicStudy.ModelEnvironmentConnection.JointsAndDrivers = {
+  AnyKinDriver JntDriverLExo = {
+    
+    #include "<ANYMOCAP_PATH>/InterpolateJointAngleData.any"
+    FileReader.FileName = TEMP_PATH + "/" + MOCAP_TEST_FILENAME_PREFIX +MOCAP_OUTPUT_FILENAME_PREFIX + Main.ModelSetup.TrialSpecificData.TrialFileName + "-euler-LExo-full.txt";
+    FileReader.Data0 = zeros(nDim, FileReader.Length0 );
+    
+    AnyKinMeasure& Rot_LExo_Ankle = ...Exoskeleton.Left.Mates.Ankle_Joint; 
+    AnyKinMeasure& Rot_LExo_Knee = ...Exoskeleton.Left.Mates.Knee_Joint;    
+    
+    //    Reaction.Type is On by default. They are switched off in the Exo.any file
+    //    See #include "../Exo/Exo.any"
+    //    Reaction.Type = repmat(nDim, On); 
+  };
+  
+  AnyKinDriver JntDriverLExoShankFull = {
+    
+    #include "<ANYMOCAP_PATH>/InterpolateJointAngleData.any"
+    FileReader.FileName = TEMP_PATH + "/" + MOCAP_TEST_FILENAME_PREFIX + MOCAP_OUTPUT_FILENAME_PREFIX + Main.ModelSetup.TrialSpecificData.TrialFileName + "-euler-LExoshank-full.txt";
+    
+    /// The default data if no joint angles files have been generated.
+    FileReader.Data0 = repmat(
+    1, FileReader.Length0, 
+    arrcat({Main.ExoV2.Left.Shank_Segment___1.r0[0],
+            Main.ExoV2.Left.Shank_Segment___1.r0[1],
+            Main.ExoV2.Left.Shank_Segment___1.r0[2],
+            0,
+            0,
+            0
+           }
+      )
+    );
+    AnyKinMeasure& ShankPosX = ...Exoskeleton.Left.ShankPosition.ShankPosX;
+    AnyKinMeasure& ShankPosY = ...Exoskeleton.Left.ShankPosition.ShankPosY;
+    AnyKinMeasure& ShankPosZ = ...Exoskeleton.Left.ShankPosition.ShankPosZ;
+    AnyKinMeasure& ShankRotX = ...Exoskeleton.Left.ShankPosition.ShankRotX;
+    AnyKinMeasure& ShankRotY = ...Exoskeleton.Left.ShankPosition.ShankRotY;
+    AnyKinMeasure& ShankRotZ = ...Exoskeleton.Left.ShankPosition.ShankRotZ;
+    //  Reaction.Type is On by default. They are switched off in the Exo.any file
+    //  See #include "../Exo/Exo.any"
+    //  Reaction.Type = repmat(nDim, On);
+  };
+};
+  

@@ -1,0 +1,33 @@
+#ifdef  __CREATE_CC_NODE__
+#undef  __CREATE_CC_NODE__
+#endif
+
+#define __CREATE_CC_NODE__(IDX) NodesBaseFrame = { AnyRefNode Node##IDX = {sRel = ..Targets[IDX]; AnyDrawNode Drw = { RGB = {1, 0, 1}; ScaleXYZ= 0.005*{1, 1, 1}; Opacity = 1.0; }; };}; AnyRefNode &Node##IDX = NodesBaseFrame.Node##IDX
+
+
+
+
+#class_template CreateSingleContactNode (AnyRefFrame &human_ref, // refer to exact contact point on human.
+                                                     NAME = "",
+                                                     CONTACT_POINT_OFFSET_DIST = 0)
+{
+  
+  AnyFloat Targets = 
+  {
+    {0,0,0}
+  };
+  
+  human_ref = 
+  {
+    AnyRefNode CondCont_Nodes##NAME =
+    {
+      sRel = {0, 0, 0};
+    };
+  };
+  
+  
+  AnyFolder &NodesBaseFrame = human_ref.CondCont_Nodes##NAME;
+  
+  __CREATE_CC_NODE__(0 );
+  
+};

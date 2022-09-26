@@ -1,0 +1,45 @@
+AnyFolder ForceFile_Left = { 
+  
+  
+  AnyForce Force_Left = {
+    AnyKinPLine Lig = 
+    {
+      AnyRefFrame &Th1 = Main.ExoV2.Left.Thigh_Segment___1.ForcePointTh1;
+      AnyRefFrame &Th2 = Main.ExoV2.Left.Thigh_Segment___1.ForcePointTh2;
+      AnyRefFrame &ThR1 = Main.ExoV2.Left.Thigh_Rail___1.ForcePointThR1;
+      AnyRefFrame &Sh1 = Main.ExoV2.Left.Shank_Segment___1.ForcePointSh2;
+      AnyRefFrame &Sh2 = Main.ExoV2.Left.Shank_Segment___1.ForcePointSh1;
+      AnyDrawPLine drw={Thickness=0.005;RGB={0.4,0.4,0.4};};
+    };
+
+  #ifpathexists "ForceFiles/" + MOCAP_NAME_MAINFILEDIR + "_Left.txt"  
+      AnyFunInterpol force ={
+        Type=Bspline;
+        BsplineOrder = 4;
+        FileName = "ForceFiles/" + MOCAP_NAME_MAINFILEDIR + "_Left.txt";
+      };
+  #else AnyInt Missing_LExoForce_Notice =  notice(0,"NOTE: Left exoskeleton force file is missing! Default ExoForce = 0 is applied");
+      AnyFunConst force = {
+        Value = {0};
+      };
+  #endif
+      
+      F = -1*force(t);
+
+    AnyDrawForce drw ={};
+  };
+  
+  AnyFolder ResultantExoForceOnKnee = {
+    AnyForceMomentMeasure2 ExoForceOnShankKnee = {
+      AnyRefFrame &HumRef = Main.HumanModel.BodyModel.Left.Leg.Seg.Shank.KneeJoint.KneeNodeRotated;
+      AnyForceBase &ExoForce = Main.ExoV2.ForceFile_Left.Force_Left;
+      AnySeg &ExoThighFront = Main.ExoV2.Left.Thigh_Segment___1;
+      // Exo Thigh Force on Knee in Human Shank ref system. Extension moment by exo results as
+      // positive moment about Y-axis. 
+      AnyVec3 FLocal = F * HumRef.Axes;
+      AnyVec3 MLocal = M * HumRef.Axes;    
+    };    
+  }; // Exo Force On Knee
+  
+}; //ForceFile
+

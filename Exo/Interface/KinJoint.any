@@ -1,0 +1,86 @@
+AnyKinEqSimpleDriver ThighJnt = {
+  AnyKinMeasureOrg Measure = {
+    AnyKinLinear Linear = 
+    {
+      AnyRefFrame &HumanThigh = ...Human.Thigh.ExoRefNode.ThighAxis.CenNode;
+      AnyRefFrame &ExoThigh = ...Exo.Thigh_Segment___1.ThighAxis.CenNode;
+      Ref = 0;
+    }; // Thigh Linear
+    
+    AnyVar RotX_deg = Rotational.Pos[0]*180/pi; // degrees
+    AnyVar RotY_deg = Rotational.Pos[1]*180/pi; // degrees
+    AnyVar RotZ_deg = Rotational.Pos[2]*180/pi; // degrees
+    
+    AnyKinRotational Rotational = 
+    {        
+      Type = RotAxesAngles;
+      Axis1 = x; Axis2 = y; Axis3 = z;
+      // Default Axis 1, 2, 3 = z, y, x
+      AnyRefFrame &HumanThigh = ...Human.Thigh.ExoRefNode.ThighAxis.CenNode;
+      AnyRefFrame &ExoThigh = ...Exo.Thigh_Segment___1.ThighAxis.CenNode;      
+    }; // Thigh Rotational 
+    
+    MeasureOrganizer = {0,1,5};
+  }; // Measure_HumExo_Thigh  
+  
+  DriverPos = repmat(nDim, 0.0); 
+  DriverVel = repmat(nDim, 0.0);
+};
+
+AnyKinEqSimpleDriver ShankJnt = {
+  AnyKinMeasureOrg Measure = {
+    AnyKinLinear Linear = 
+    {
+      AnyRefFrame &HumanShank = ...Human.Shank.ExoRefNode.ShankAxis.CenNode;
+      AnyRefFrame &ExoShank = ...Exo.Shank_Segment___1.ShankAxis.CenNode;
+      Ref = 0;
+    }; // Shank Linear
+    
+    AnyVar RotX_deg = Rotational.Pos[0]*180/pi; // degrees
+    AnyVar RotY_deg = Rotational.Pos[1]*180/pi; // degrees
+    AnyVar RotZ_deg = Rotational.Pos[2]*180/pi; // degrees
+    
+    AnyKinRotational Rotational = 
+    {        
+      Type = RotAxesAngles;
+      Axis1 = x; Axis2 = y; Axis3 = z;
+      // Default Axis 1, 2, 3 = z, y, x
+      AnyRefFrame &HumanShank = ...Human.Shank.ExoRefNode.ShankAxis.CenNode;
+      AnyRefFrame &ExoShank = ...Exo.Shank_Segment___1.ShankAxis.CenNode;      
+    }; // Shank Rotational 
+    
+    MeasureOrganizer = {0,1,2,4};
+  }; // Measure_HumExo_Shank
+  
+  DriverPos = repmat(nDim, 0.0); 
+  DriverVel = repmat(nDim, 0.0);
+};
+
+AnyKinEqSimpleDriver FootJnt = {
+  AnyKinMeasureOrg Measure_HumExo_Foot = {
+    AnyKinLinear Linear = 
+    {
+      AnyRefFrame &HumanFoot = ...Human.Foot.ExoRefNode.GroundJointRotated;
+      AnyRefFrame &ExoFoot = ...Exo.Foot_Segment___1.GroundJointRotated;
+      Ref = 0;
+    }; // Foot Linear
+    
+    AnyVar RotX_deg = Rotational.Pos[0]*180/pi; // degrees
+    AnyVar RotY_deg = Rotational.Pos[1]*180/pi; // degrees
+    AnyVar RotZ_deg = Rotational.Pos[2]*180/pi; // degrees
+    
+    AnyKinRotational Rotational = 
+    {        
+      Type = RotAxesAngles;
+      Axis1 = x; Axis2 = y; Axis3 = z;
+      // Default Axis 1, 2, 3 = z, y, x
+      AnyRefFrame &HumanFoot = ...Human.Foot.ExoRefNode.GroundJointRotated;
+      AnyRefFrame &ExoFoot = ...Exo.Foot_Segment___1.GroundJointRotated;      
+    }; // Foot Rotational 
+    
+    MeasureOrganizer = {2};
+  }; // Measure_HumExo_Foot
+  
+  DriverPos = repmat(nDim, 0.0); 
+  DriverVel = repmat(nDim, 0.0);
+};

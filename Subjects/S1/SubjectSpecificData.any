@@ -1,0 +1,94 @@
+Main.ModelSetup.SubjectSpecificData = 
+{
+  AnyFolder ExoMeasures = {
+    AnyFolder Left = {
+      AnyFloat Distance_FoSeg_FoR_Lat = 0.58; // cm Distance between Foot_Segment and Foot_Rail in frontal plane
+      AnyFloat Distance_Ground_Ankle = 7.5; // cm
+      AnyFloat Distance_Ankle_Knee = 41.0; // cm
+      AnyFloat Distance_ShUR_ShSeg = 13.5; // cm Distance between Shank_Upper_Rail and Shank_Segment
+      AnyFloat Distance_ThR_ThSeg = 2.0; // cm  Distance between Thigh_Rail and Thigh_Segment
+    };
+    
+    // Symmetry assumed between Right and Left. In case not, insert specific value here.
+    AnyFolder Right = {
+      AnyFloat Distance_FoSeg_FoR_Lat = .Left.Distance_FoSeg_FoR_Lat; // cm Distance between Foot_Segment and Foot_Rail in frontal plane
+      AnyFloat Distance_Ground_Ankle = .Left.Distance_Ground_Ankle; // cm
+      AnyFloat Distance_Ankle_Knee = .Left.Distance_Ankle_Knee; // cm
+      AnyFloat Distance_ShUR_ShSeg = .Left.Distance_ShUR_ShSeg; // cm Distance between Shank_Upper_Rail and Shank_Segment
+      AnyFloat Distance_ThR_ThSeg = .Left.Distance_ThR_ThSeg; // cm  Distance between Thigh_Rail and Thigh_Segment
+    };
+  };
+};
+
+// This sets the Anthropometrics for all trials for this subject
+Main.HumanModel.Anthropometrics = 
+{
+     BodyMass = 77.4;
+     BodyHeight = 1.83;   
+   
+   // These antrhopometric data will be used as initial guess for 
+   // the optimization alogorithm for segment length. Default length 
+   // based on the subjects' height will be used if these values are obmitted. 
+   SegmentDimensions = 
+   {
+      PelvisWidth = DesignVar( 0.175); ///< distance between hip joints
+      HeadHeight = DesignVar( 0.14);///< height in neutral position from  C1HatNode to top of head
+      TrunkHeight = DesignVar( 0.62);///< height in neautral position from  C1HatNode to L5SacrumJnt
+      
+      Right =
+      {
+        ThighLength = DesignVar( 0.478); 
+        ShankLength = DesignVar( 0.460);
+        FootLength= DesignVar(0.280);
+        UpperArmLength = DesignVar( 0.30);
+        LowerArmLength = DesignVar(0.23);
+        HandLength = DesignVar( 0.182);
+        HandBreadth = DesignVar( 0.085);
+      };
+      Left =
+      {
+        ThighLength= DesignVar( 0.478); 
+        ShankLength= DesignVar( 0.460);
+        FootLength= DesignVar(0.280);
+        UpperArmLength = DesignVar( 0.30);
+        LowerArmLength = DesignVar(0.23);
+        HandLength = DesignVar( 0.182);
+        HandBreadth = DesignVar( 0.085);
+      };
+   };
+};
+
+// This sets load time arm positions for all trials for this subject.
+Main.HumanModel.Mannequin.Posture =  
+{
+    Left =  
+    {
+      SternoClavicularProtraction = -20.5;
+      SternoClavicularElevation = 12.5;
+      
+      GlenohumeralFlexion = 30;
+      GlenohumeralAbduction =  0;
+      GlenohumeralExternalRotation =  -65;
+      ElbowFlexion =  120;
+      ElbowPronation =  0;
+      WristFlexion =  0;
+      WristAbduction =  0;
+      
+    };
+    
+    Right =  
+    {
+      SternoClavicularProtraction = -20.7;
+      SternoClavicularElevation = 12.5;
+      
+      GlenohumeralFlexion =  30;
+      GlenohumeralAbduction =  0;
+      GlenohumeralExternalRotation =  -70;
+      ElbowFlexion = 120;
+      ElbowPronation =  0;
+      WristFlexion =  0;
+      WristAbduction = 0;
+    };
+
+
+};

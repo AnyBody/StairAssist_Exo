@@ -1,0 +1,179 @@
+//Measure distances and rotations between corresponding segments on the human and the exoskeleton.
+
+AnyFolder KinMeasureHumanExo = {
+  
+  // Measure between Human Thigh and Exoskeleton Thigh Front
+  AnyKinMeasureOrg Measure_HumThigh_ExoThigh = {
+    AnySeg &Human = ..Human.Thigh;
+    AnySeg &Exo = ..Exo.Thigh_Segment___1;
+    AnyKinLinear Dist = {
+      AnyRefFrame &Human = .Human;
+      AnyRefFrame &Exo = .Exo;
+      Ref = 0; // measurement in the human reference system.
+    };
+    AnyKinRotational Rot = {
+      AnyRefFrame &Human = .Human;
+      AnyRefFrame &Exo = .Exo;
+      Type = RotAxesAngles;
+      Axis1 = x;
+      Axis2 = y;
+      Axis3 = z;
+    };
+  }; // Measure_HumThigh_ExoThigh
+  
+  // Measure between Human Shank and Exoskeleton Shank
+  AnyKinMeasureOrg Measure_HumShank_ExoShank = {
+    AnySeg &Human = ..Human.Shank;
+    AnySeg &Exo = ..Exo.Shank_Segment___1;
+    AnyKinLinear Dist = {
+      AnyRefFrame &Human = .Human;
+      AnyRefFrame &Exo = .Exo;
+      Ref = 0; // measurement in the human reference system.
+    };
+    AnyKinRotational Rot = {
+      AnyRefFrame &Human = .Human;
+      AnyRefFrame &Exo = .Exo;
+      Type = RotAxesAngles;
+      Axis1 = x;
+      Axis2 = y;
+      Axis3 = z;
+    };
+  }; // Measure_HumShank_ExoShank
+  
+  // Measure between Human Foot and Exoskeleton Foot
+  AnyKinMeasureOrg Measure_HumFoot_ExoFoot = {
+    AnySeg &Human = ..Human.Foot;
+    AnySeg &Exo = ..Exo.Foot_Segment___1;
+    AnyKinLinear Dist = {
+      AnyRefFrame &Human = .Human;
+      AnyRefFrame &Exo = .Exo;
+      Ref = 0; // measurement in the human reference system.
+    };
+    AnyKinRotational Rot = {
+      AnyRefFrame &Human = .Human;
+      AnyRefFrame &Exo = .Exo;
+      Type = RotAxesAngles;
+      Axis1 = x;
+      Axis2 = y;
+      Axis3 = z;
+    };
+  }; // Measure_HumFoot_ExoFoot  
+  
+  // Measure relative movement between Human and Exo at key points
+  
+  // Thigh
+  AnyKinMeasureOrg Measure_HumExo_Thigh = {
+    AnyKinLinear Linear = 
+    {
+      AnyRefFrame &HumanThigh = ...Human.Thigh.ExoRefNode.ThighAxis.CenNode;
+      AnyRefFrame &ExoThigh = ...Exo.Thigh_Segment___1.ThighAxis.CenNode;
+      Ref = 0;
+    }; // Thigh Linear
+    
+    AnyVar RotX_deg = Rotational.Pos[0]*180/pi; // degrees
+    AnyVar RotY_deg = Rotational.Pos[1]*180/pi; // degrees
+    AnyVar RotZ_deg = Rotational.Pos[2]*180/pi; // degrees
+    
+    AnyKinRotational Rotational = 
+    {        
+      Type = RotAxesAngles;
+      Axis1 = x; Axis2 = y; Axis3 = z;
+      // Default Axis 1, 2, 3 = z, y, x
+      AnyRefFrame &HumanThigh = ...Human.Thigh.ExoRefNode.ThighAxis.CenNode;
+      AnyRefFrame &ExoThigh = ...Exo.Thigh_Segment___1.ThighAxis.CenNode;      
+    }; // Thigh Rotational 
+  }; // Measure_HumExo_Thigh
+  
+  // Knee
+  AnyKinMeasureOrg Measure_HumExo_Knee_Sh = {
+    AnyKinLinear Linear = 
+    {
+      AnyRefFrame &HumanKnee = ...Human.Shank.KneeJoint.KneeNodeRotated;
+      AnyRefFrame &ExoKnee = ...Exo.Shank_Upper_Rail___1.CS_KneeJoint.KneeJointRotated;
+      Ref = 0;
+    }; // Knee Linear
+    
+    AnyVar RotX_deg = Rotational.Pos[0]*180/pi; // degrees
+    AnyVar RotY_deg = Rotational.Pos[1]*180/pi; // degrees
+    AnyVar RotZ_deg = Rotational.Pos[2]*180/pi; // degrees
+    
+    AnyKinRotational Rotational = 
+    {        
+      Type = RotAxesAngles;
+      Axis1 = x; Axis2 = y; Axis3 = z;
+      // Default Axis 1, 2, 3 = z, y, x
+      AnyRefFrame &HumanKnee = ...Human.Shank.KneeJoint.KneeNodeRotated;
+      AnyRefFrame &ExoKnee = ...Exo.Shank_Upper_Rail___1.CS_KneeJoint.KneeJointRotated;      
+    }; // Knee Rotational 
+  }; // Measure_HumExo_Knee_Sh
+  
+  // Shank 
+  AnyKinMeasureOrg Measure_HumExo_Shank = {
+    AnyKinLinear Linear = 
+    {
+      AnyRefFrame &HumanShank = ...Human.Shank.ExoRefNode.ShankAxis.CenNode;
+      AnyRefFrame &ExoShank = ...Exo.Shank_Segment___1.ShankAxis.CenNode;
+      Ref = 0;
+    }; // Shank Linear
+    
+    AnyVar RotX_deg = Rotational.Pos[0]*180/pi; // degrees
+    AnyVar RotY_deg = Rotational.Pos[1]*180/pi; // degrees
+    AnyVar RotZ_deg = Rotational.Pos[2]*180/pi; // degrees
+    
+    AnyKinRotational Rotational = 
+    {        
+      Type = RotAxesAngles;
+      Axis1 = x; Axis2 = y; Axis3 = z;
+      // Default Axis 1, 2, 3 = z, y, x
+      AnyRefFrame &HumanShank = ...Human.Shank.ExoRefNode.ShankAxis.CenNode;
+      AnyRefFrame &ExoShank = ...Exo.Shank_Segment___1.ShankAxis.CenNode;      
+    }; // Shank Rotational 
+  }; // Measure_HumExo_Shank
+  
+  // Ankle
+  AnyKinMeasureOrg Measure_HumExo_Ankle_Fo = {
+    AnyKinLinear Linear = 
+    {
+      AnyRefFrame &HumanAnkle = ...Human.Talus.AnkleJoint.AnkleJointRotated;
+      AnyRefFrame &ExoAnkle = ...Exo.Foot_Rail___1.CS_AnkleJoint.AnkleJointRotated;
+      Ref = 0;
+    }; // Ankle Linear
+    
+    AnyVar RotX_deg = Rotational.Pos[0]*180/pi; // degrees
+    AnyVar RotY_deg = Rotational.Pos[1]*180/pi; // degrees
+    AnyVar RotZ_deg = Rotational.Pos[2]*180/pi; // degrees
+    
+    AnyKinRotational Rotational = 
+    {        
+      Type = RotAxesAngles;
+      Axis1 = x; Axis2 = y; Axis3 = z;
+      // Default Axis 1, 2, 3 = z, y, x
+      AnyRefFrame &HumanAnkle = ...Human.Talus.AnkleJoint.AnkleJointRotated;
+      AnyRefFrame &ExoAnkle = ...Exo.Foot_Rail___1.CS_AnkleJoint.AnkleJointRotated;      
+    }; // Ankle Rotational 
+  }; // Measure_HumExo_Ankle_Fo
+  
+  // Foot
+  AnyKinMeasureOrg Measure_HumExo_Foot = {
+    AnyKinLinear Linear = 
+    {
+      AnyRefFrame &HumanFoot = ...Human.Foot.ExoRefNode.GroundJointRotated;
+      AnyRefFrame &ExoFoot = ...Exo.Foot_Segment___1.GroundJointRotated;
+      Ref = 0;
+    }; // Foot Linear
+    
+    AnyVar RotX_deg = Rotational.Pos[0]*180/pi; // degrees
+    AnyVar RotY_deg = Rotational.Pos[1]*180/pi; // degrees
+    AnyVar RotZ_deg = Rotational.Pos[2]*180/pi; // degrees
+    
+    AnyKinRotational Rotational = 
+    {        
+      Type = RotAxesAngles;
+      Axis1 = x; Axis2 = y; Axis3 = z;
+      // Default Axis 1, 2, 3 = z, y, x
+      AnyRefFrame &HumanFoot = ...Human.Foot.ExoRefNode.GroundJointRotated;
+      AnyRefFrame &ExoFoot = ...Exo.Foot_Segment___1.GroundJointRotated;      
+    }; // Foot Rotational 
+  }; // Measure_HumExo_Foot
+
+}; // MeasureHumanExo

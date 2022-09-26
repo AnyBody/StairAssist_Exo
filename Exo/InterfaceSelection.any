@@ -1,0 +1,125 @@
+// This file allows to select different types of interface model by selecting only one of the 
+// following options.
+// The name of the results output file prefixes the INTERFACE_MODEL name.
+// If needed, modify the name of the output file here:
+// #include "../Changes/CSV/ExportCSV.any"
+
+//////////////////////////////////////////////////////////////////////////////
+// define Interface model as one of CMDS, CMKJDS, KJ or KJDS
+#define INTERFACE_MODEL "CMDS"
+//////////////////////////////////////////////////////////////////////////////
+
+// implement code only if INTERFACE_MODEL is correctly defined
+#if  (INTERFACE_MODEL =="CMDS")|(INTERFACE_MODEL =="CMKJDS")|(INTERFACE_MODEL =="KJ")|(INTERFACE_MODEL =="KJDS")  
+
+
+
+  #if INTERFACE_MODEL == "CMDS"
+  ///// CMDS /////////// CONTACT MODEL INTERFACE /////////////////////////////
+  //  Exo is driven by marker data and interface forces are computed via contact elements
+  //  (or recruited actuators). Uses dummy segments to align exo and human knee and ankle joints
+  Interface_Left = { 
+    #include "Interface/Interface.any"
+  };
+  Interface_Right = { 
+    #include "Interface/Interface.any"
+  };      
+  //////////////////////////////////////////////////////////////////////////////
+  #endif
+  
+  
+  
+  #if INTERFACE_MODEL == "CMKJDS"
+  ///// CMKJDS //////// CONTACT MODEL KIN JOINT INTERFACE ///////////////////////////
+  //  Exo is driven by Kinematic Joints and interface forces are computed via contact elements
+  //  (or recruited actuators). Uses dummy segments to align exo and human knee and ankle joints
+  Interface_Left = {
+    #include "Interface/KinJoint.any"
+    #include "Interface/Interface.any"
+    ////// Switch off reactions from kinematic drivers defined in #include "Interface/KinJoint.any"
+    ThighJnt.Reaction.Type = repmat(ThighJnt.nDim, Off);
+    ShankJnt.Reaction.Type = repmat(ShankJnt.nDim, Off);
+    FootJnt.Reaction.Type = repmat(FootJnt.nDim, Off);
+  };
+  Interface_Right = { 
+    #include "Interface/KinJoint.any"
+    #include "Interface/Interface.any"
+    ////// Switch off reactions from kinematic drivers defined in #include "Interface/KinJoint.any"
+    ThighJnt.Reaction.Type = repmat(ThighJnt.nDim, Off);
+    ShankJnt.Reaction.Type = repmat(ShankJnt.nDim, Off);
+    FootJnt.Reaction.Type = repmat(FootJnt.nDim, Off);
+  };    
+  ////// Exclude Exo drivers from marker data to avoid conflict with kinematic drivers defined above in KinJoint.any
+  Main.Studies.InverseDynamicStudy.MechObjectExclude = ObjSearch("ModelEnvironmentConnection.JointsAndDrivers.*Ex*");
+  //////////////////////////////////////////////////////////////////////////////  
+  #endif  
+  
+  
+  
+  #if INTERFACE_MODEL == "KJ"
+  ///// KJ ///////////// KINEMATIC JOINT INTERFACE ////////////////////////////
+  //  Exo is driven by kinematic drivers between human and exo segments and interface forces
+  //  are computed via AnyReacForces included in the kinematic drivers. 
+  //  No. of constraints in kinematic drivers = degrees of freedom of the exoskeleton
+  //  Does not use dummy segments to align exo and human knee and ankle joints
+  Interface_Left = { 
+    #include "Interface/KinJoint.any" 
+    #include "Interface/ResultantReactions.any"
+  };
+  Interface_Right = { 
+    #include "Interface/KinJoint.any" 
+    #include "Interface/ResultantReactions.any"
+  };
+  ////// Exclude Exo drivers from marker data to avoid conflict with kinematic drivers defined above in KinJoint.any
+  Main.Studies.InverseDynamicStudy.MechObjectExclude = ObjSearch("ModelEnvironmentConnection.JointsAndDrivers.*Ex*");
+  //////////////////////////////////////////////////////////////////////////////
+  #endif
+
+  
+  
+  #if INTERFACE_MODEL == "KJDS"
+  ///// KJDS ////////// KINEMATIC JOINT DUMMY SEG INTERFACE //////////////////////
+  //  Exo is driven by kinematic drivers between human and exo segments and interface forces
+  //  are computed via AnyReacForces included in the kinematic drivers. 
+  //  No. of constraints in kinematic drivers = degrees of freedom of the exoskeleton
+  //  Uses dummy segments to align exo and human knee and ankle joints (even though they are not needed)
+  Interface_Left = { 
+    #include "Interface/KinJoint.any" 
+    #include "Interface/DummySegs.any"
+    #include "Interface/ResultantReactions.any"
+  };
+  Interface_Right = { 
+    #include "Interface/KinJoint.any" 
+    #include "Interface/DummySegs.any"
+    #include "Interface/ResultantReactions.any"
+  };
+  ////// Exclude Exo drivers from marker data to avoid conflict with kinematic drivers defined above in KinJoint.any
+  Main.Studies.InverseDynamicStudy.MechObjectExclude = ObjSearch("ModelEnvironmentConnection.JointsAndDrivers.*Ex*");
+  //////////////////////////////////////////////////////////////////////////////
+  #endif
+
+  
+// if INTERFACE_MODEL is incorrectly defined, implement CMDS as default and give warning 
+#else
+
+  // Implement CMDS as default
+  
+  ///// CMDS /////////// CONTACT MODEL INTERFACE /////////////////////////////
+  //  Exo is driven by marker data and interface forces are computed via artificial
+  //  contact muscles. Uses dummy segments to align exo and human knee and ankle joints
+  Interface_Left = { 
+    #include "Interface/Interface.any"
+  };
+  Interface_Right = { 
+    #include "Interface/Interface.any"
+  };      
+  //////////////////////////////////////////////////////////////////////////////
+
+  // warning message for incorrect choice
+  AnyInt Warning_InterfaceModel = warn(0,strformat("\n" +
+                                    "------------------------------------------------------------------------------------------------------\n"+
+                                    "Please check choice of INTERFACE_MODEL. Only one of \x22CMDS\x22, \x22CMKJDS\x22, \x22KJ\x22, or \x22KJDS\x22 is allowed.\n" +
+                                    "The model is loaded with \x22CMDS\x22 interface model selected as default.\n" +
+                                    "------------------------------------------------------------------------------------------------------")); 
+#endif                                    
+  

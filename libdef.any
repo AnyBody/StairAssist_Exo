@@ -1,0 +1,17 @@
+#ifndef ANYBODY_PATH_OUTPUT
+#path ANYBODY_PATH_OUTPUT "Output/"
+#endif
+
+#ifpathexists "../libdef.any"
+  #include "../libdef.any"
+#else
+    // This line includes the read-only AMMR from the installation
+    // directory of AMS, if no parent folder libdef.any is found.
+    // Please consider pointing to the libdef file of your demo AMMR.
+   #include "<ANYBODY_PATH_EXEDIR>/AMMR/libdef.any"
+#endif
+
+// Include Custom Class Templates
+#include "SupportingFiles/ClassTemplates/Exo_ConditionalContact.any"
+#include "SupportingFiles/ClassTemplates/CreateExoOriginOnHuman.any"
+

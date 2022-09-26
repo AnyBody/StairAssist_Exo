@@ -1,0 +1,146 @@
+AnyFolder DummySegs = {
+  
+  // Create Dummmy Segs that will be aligned with the human segs
+  AnySeg Thigh = {
+    Mass = 0.0;
+    Jii = {0.0, 0.0, 0.0};
+  };
+  
+  AnySeg Shank = {
+    Mass = 0.0;
+    Jii = {0.0, 0.0, 0.0};
+    
+    AnyRefNode AnkleJointRotated = {
+      sRel = (...Human.Shank.AnkleJoint.sRel -
+              ...Human.Shank.KneeJoint.sRel) *
+              ...Human.Shank.KneeJoint.ARel *
+              ...Human.Shank.KneeJoint.KneeNodeRotated.ARel ;      
+      ARel = ...Human.Shank.KneeJoint.KneeNodeRotated.ARel' *
+             ...Human.Shank.KneeJoint.ARel' *
+             ...Human.Shank.AnkleJoint.ARel *
+             ...Human.Shank.AnkleJoint.AnkleJointRotated.ARel;
+      AnyDrawRefFrame drw = {};
+    };  
+  };
+  
+  AnySeg Foot = {
+    Mass = 0.0;
+    Jii = {0.0, 0.0, 0.0};
+  };
+  
+  // Create kinematic joint between corresponding human and dummy segs (notice Reactions are off)
+  AnyStdJoint Joint_Thigh_HumDummy = {
+    AnyRefFrame &ThighKnee_Hum = ..Human.Thigh.KneeJoint.KneeNodeRotated;
+    AnySeg &Thigh_Dummy = .Thigh;
+    Constraints.Reaction.Type = {Off, Off, Off, Off, Off, Off}; // Switch off reaction forces 
+  };  
+  AnyStdJoint Joint_Shank_HumDummy = {
+    AnyRefFrame &ShankKnee_Hum = ..Human.Shank.KneeJoint.KneeNodeRotated;
+    AnySeg &Shank_Dummy = .Shank;
+    Constraints.Reaction.Type = {Off, Off, Off, Off, Off, Off}; // Switch off reaction forces 
+  };
+  AnyStdJoint Joint_Foot_HumDummy = {
+    AnyRefFrame &FootAnkle_Hum = ..Human.Talus.AnkleJoint.AnkleJointRotated;
+    AnySeg &Foot_Dummy = .Foot;
+    Constraints.Reaction.Type = {Off, Off, Off, Off, Off, Off}; // Switch off reaction forces 
+  };
+  
+  // Switch off Reactions at Exo knee
+  AnyJoint &ExoKnee = .Exo.Mates.Knee_Joint;
+  ExoKnee.Constraints.Reaction.Type = {Off, Off, Off, Off, Off};
+  
+  // Create kinetic connection between corresponding exo and dummy segs that form the "knee"
+  AnyReacForce Reac_DummySeg_Exo_Knee = {
+    AnyKinRotational ThighRot = {
+      AnyRefFrame &Dummy = ..Thigh;
+      AnyRefFrame &Exo = ...Exo.Thigh_Rail___1;
+      Type = RotAxesAngles;
+      Axis1 = y;
+      Axis2 = z;
+      Axis3 = x;
+    };
+    AnyKinLinear ThighLin = {
+      Ref=0;
+      AnyRefFrame &Dummy = ..Thigh;
+      AnyRefFrame &Exo = ...Exo.Thigh_Rail___1;      
+    };
+    AnyKinRotational ShankRot = {
+      AnyRefFrame &Dummy = ..Shank;
+      AnyRefFrame &Exo = ...Exo.Shank_Upper_Rail___1;
+      Type = RotAxesAngles;
+      Axis1 = y;
+      Axis2 = z;
+      Axis3 = x;
+    };
+    AnyKinLinear ShankLin = {
+      Ref=0;
+      AnyRefFrame &Dummy = ..Shank;
+      AnyRefFrame &Exo = ...Exo.Shank_Upper_Rail___1;      
+    };
+  }; // Reac_DummySeg_Exo
+  
+  // Create Dummy knee joint that supports the exo forces but is aligned like the human knee
+  AnyReacForce ReacDummyKneeJoint = {
+    AnyKinLinear LinThighShank = {
+      Ref=0;
+      AnyRefFrame &Thigh = ..Thigh;
+      AnyRefFrame &Shank = ..Shank;      
+    };
+    
+    AnyKinMeasureOrg Rotation = {
+      AnyKinRotational RotThighShank = {
+        AnyRefFrame &Thigh = ...Thigh;
+        AnyRefFrame &Shank = ...Shank;
+        Type = PlanarAngles;
+        Axis1 = y;
+        Axis2 = z;
+        Axis3 = x;
+      };
+      MeasureOrganizer = {1,2};
+    };
+  }; // ReacDummyKneeJoint
+  
+    // Switch off Reactions at Exo ankle
+  AnyJoint &ExoAnkle = .Exo.Mates.Ankle_Joint;
+  ExoAnkle.Constraints.Reaction.Type = {Off, Off, Off, Off, Off};
+  
+  // Create kinetic connection between corresponding exo and dummy segs that form the "ankle"
+  AnyReacForce Reac_DummySeg_Exo_Ankle = {
+    AnyKinRotational FootRot = {
+      AnyRefFrame &Dummy = ..Foot;
+      AnyRefFrame &Exo = ...Exo.Foot_Rail___1;
+      Type = RotAxesAngles;
+      Axis1 = y;
+      Axis2 = z;
+      Axis3 = x;
+    };
+    AnyKinLinear FootLin = {
+      Ref=0;
+      AnyRefFrame &Dummy = ..Foot;
+      AnyRefFrame &Exo = ...Exo.Foot_Rail___1;      
+    };
+    // Shank seg is already included in the knee joint
+  }; // Reac_DummySeg_Exo
+  
+  // Create Dummy ankle joint that supports the exo forces but is aligned like the human ankle
+  AnyReacForce ReacDummyAnkleJoint = {
+    AnyKinLinear  LinShankFoot = {
+      Ref=0;
+      AnyRefFrame &Shank = ..Shank.AnkleJointRotated;
+      AnyRefFrame &Foot = ..Foot;      
+    };
+    
+    AnyKinMeasureOrg Rotation = {
+      AnyKinRotational RotShankFoot = {
+        AnyRefFrame &Shank = ...Shank.AnkleJointRotated;
+        AnyRefFrame &Foot = ...Foot;
+        Type = PlanarAngles;
+        Axis1 = y;
+        Axis2 = z;
+        Axis3 = x;
+      };
+      MeasureOrganizer = {1,2};
+    };
+  }; // ReacDummyAnkleJoint
+
+}; // DummySegs

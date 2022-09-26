@@ -1,0 +1,103 @@
+#include "Resultant.any"
+#include "DummySegs.any"
+
+AnyFolder StrengthValues = {
+  AnyVar Thigh = 6000; 
+  AnyVar Shank = Thigh;
+  AnyVar FootStrap = Thigh; 
+  AnyVar FootBase = Thigh; 
+};
+
+AnyFolder Thigh = {
+  
+  AnyFolder Settings = {
+    AnyRefFrame &HumanRefNode = ..Human.Thigh.ExoRefNode;
+    AnyRefFrame &ExoRefSeg = ..Exo.Thigh_Segment___1;
+    AnyVar Strength = ..StrengthValues.Thigh;
+    
+    #ifdef SHOW_EXOSUB_FORCE_PLATE
+    #undef SHOW_EXOSUB_FORCE_PLATE
+    #endif
+    #define SHOW_EXOSUB_FORCE_PLATE 0 //Switch for visibility of Virtual Force Plate (1 = visible, 0 = Invisible)
+    
+  }; // Settings
+  
+  AnyFolder VirtualForcePlates = {
+    // this file defines a macro statement to implement the conditional contact class template using node number as
+    // an input argument.
+    #include "DefineForcePlates.any"
+    // this file implements the macro statement defined previously by passing different node numbers as the input argument
+    #include "CreateCondCont_Thigh.any"
+  }; // VirtualForcePlates
+  
+};// Thigh
+
+AnyFolder Shank = {
+  
+  AnyFolder Settings = {
+    AnyRefFrame &HumanRefNode = ..Human.Shank.ExoRefNode;
+    AnyRefFrame &ExoRefSeg = ..Exo.Shank_Segment___1;
+    AnyVar Strength = ..StrengthValues.Shank;
+    
+    #ifdef SHOW_EXOSUB_FORCE_PLATE
+    #undef SHOW_EXOSUB_FORCE_PLATE
+    #endif
+    #define SHOW_EXOSUB_FORCE_PLATE 0 //Switch for visibility of Virtual Force Plate (1 = visible, 0 = Invisible)
+    
+  }; // Settings
+  
+  AnyFolder VirtualForcePlates = {
+    // this file defines a macro statement to implement the conditional contact class template using node number as
+    // an input argument.
+    #include "DefineForcePlates.any"
+    // this file implements the macro statement defined previously by passing different node numbers as the input argument
+    #include "CreateCondCont_Shank.any"
+  }; // VirtualForcePlates
+  
+};// Shank
+
+AnyFolder FootStrap = {
+  
+  AnyFolder Settings = {
+    AnyRefFrame &HumanRefNode = ..Human.Foot.ExoRefNode;
+    AnyRefFrame &ExoRefSeg = ..Exo.Foot_Segment___1;
+    AnyVar Strength = ..StrengthValues.FootStrap;
+    
+    #ifdef SHOW_EXOSUB_FORCE_PLATE
+    #undef SHOW_EXOSUB_FORCE_PLATE
+    #endif
+    #define SHOW_EXOSUB_FORCE_PLATE 0 //Switch for visibility of Virtual Force Plate (1 = visible, 0 = Invisible)
+    
+  }; // Settings
+  
+  AnyFolder VirtualForcePlates = {
+    // this file defines a macro statement to implement the conditional contact class template using node number as
+    // an input argument.
+    #include "DefineForcePlates.any"
+    // this file implements the macro statement defined previously by passing different node numbers as the input argument
+    #include "CreateCondCont_FootStrap.any"
+  }; // VirtualForcePlates
+  
+};// FootStrap
+
+FootPlateConditionalContact FootBase(
+NORMAL_DIRECTION = "Z",
+NUMBER_OF_NODES = 25,
+NODES_FOLDER = FootNodes,
+SHOW_TRIGGER_VOLUME = OFF,
+PLATE_BASE_FRAME = .Exo.Foot_Segment___1.CS_CenterBase) =   
+{
+  CreateFootContactNodes25 FootNodes(
+  foot_ref = ..Human.Foot,
+  NAME = "_Step1") = {};
+  
+  // Additional force plate settings
+  Settings = 
+  {
+    LimitDistLow = -0.06;
+    LimitDistHigh = 0.06; // Vertical height
+    LimitVelHigh = 0.8;
+    Strength = ..StrengthValues.FootBase;
+  };
+  
+};

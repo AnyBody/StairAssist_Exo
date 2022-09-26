@@ -1,0 +1,183 @@
+AnyFolder Resultant = {
+  
+  AnyFolder Thigh = {
+       
+    // Thigh Resultant
+    AnyForceMomentMeasure2 ThighResultantForceMoments = {
+      AnyRefFrame &HumRef = ...Human.Thigh.ExoRefNode.ThighAxis.CenNode;
+      IncludeForces = arrcat(
+      ObjSearchRecursive("...Thigh","*", "AnyForceBase")
+      );
+      AnySeg &Thigh = ...Human.Thigh;
+      
+      AnyVec3 FLocal = F * HumRef.Axes;
+      AnyVec3 MLocal = M * HumRef.Axes;
+      AnyFloat FLocalRes = vnorm(FLocal);
+      AnyFloat FLocalResXY = sqrt(FLocal[0]^2 + FLocal[1]^2);
+      
+      AnyDrawLine ResForce_Line = {
+        AnyRefFrame &ref = .HumRef;
+        p0 = {0, 0, 0};
+        p1 = 0.001*{.FLocal[0], .FLocal[1], .FLocal[2]};
+        Line.Thickness = 0.01;
+        GlobalCoord=Off;
+        Line.RGB = {1, 0, 0}; 
+      };
+    }; // Thigh Resultant
+    
+    // Interface Force Elements
+    AnyFolder InterfaceForceElements = {
+      AnyFloat Strength_Thigh = ...StrengthValues.Thigh;
+      AnySearchFun MaxActThigh = { Search = "....Thigh.VirtualForcePlates.ExoForcePlate*.Contacts.Contact0.Push.RefMuscles.*.Activity";};
+      AnyFloat MaxActivityThigh = max(MaxActThigh());  // checks 600 muscles for Thigh interface: Count is Ok.
+    };
+    
+    AnyForceMomentMeasure2 ExoAssistanceResultant = {
+      AnyRefFrame &HumThigh = ...Human.Thigh.ExoRefNode.ThighAxis.CenNode;
+      AnySeg &ExoThigh = ...Exo.Thigh_Segment___1;
+      AnyForceBase &ExoAssistance = ...ExoForce;
+      AnyVec3 FLocal = F * HumThigh.Axes;
+      AnyVec3 MLocal = M * HumThigh.Axes;
+    };
+    
+    AnyFolder ResultantMinusExoAssistance = {
+      AnyVec3 FLocal = .ThighResultantForceMoments.FLocal - .ExoAssistanceResultant.FLocal;
+      AnyVec3 MLocal = .ThighResultantForceMoments.MLocal - .ExoAssistanceResultant.MLocal;
+    };
+    
+  }; // Thigh
+  
+  
+  AnyFolder Shank = {
+       
+    // Shank Resultant
+    AnyForceMomentMeasure2 ShankResultantForceMoments = {
+      AnyRefFrame &HumRef = ...Human.Shank.ExoRefNode.ShankAxis.CenNode;
+      IncludeForces = arrcat(
+      ObjSearchRecursive("...Shank","*", "AnyForceBase")
+      );
+      AnySeg &Shank = ...Human.Shank;
+      
+      AnyVec3 FLocal = F * HumRef.Axes;
+      AnyVec3 MLocal = M * HumRef.Axes;
+      AnyFloat FLocalRes = vnorm(FLocal);
+      AnyFloat FLocalResXY = sqrt(FLocal[0]^2 + FLocal[1]^2);
+      
+      AnyDrawLine ResForce_Line = {
+        AnyRefFrame &ref = .HumRef;
+        p0 = {0, 0, 0};
+        p1 = 0.001*{.FLocal[0], .FLocal[1], .FLocal[2]};
+        Line.Thickness = 0.01;
+        GlobalCoord=Off;
+        Line.RGB = {1, 0, 0}; 
+      };
+    }; // Shank Resultant
+
+    // Interface Force Elements
+    AnyFolder InterfaceForceElements = {
+      AnyFloat Strength_Shank = ...StrengthValues.Shank;
+      AnySearchFun MaxActShank = { Search = "....Shank.VirtualForcePlates.ExoForcePlate*.Contacts.Contact0.Push.RefMuscles.*.Activity";};
+      AnyFloat MaxActivityShank = max(MaxActShank());  // checks 590 muscles for Shank interface: Count is Ok.
+    };
+    
+    AnyForceMomentMeasure2 ExoAssistanceResultant = {
+      AnyRefFrame &HumShank = ...Human.Shank.ExoRefNode.ShankAxis.CenNode;
+      AnySeg &ExoShank = ...Exo.Shank_Segment___1;
+      AnyForceBase &ExoAssistance = ...ExoForce;
+      AnyVec3 FLocal = F * HumShank.Axes;
+      AnyVec3 MLocal = M * HumShank.Axes;
+    };
+    
+    AnyFolder ResultantMinusExoAssistance = {
+      AnyVec3 FLocal = .ShankResultantForceMoments.FLocal - .ExoAssistanceResultant.FLocal;
+      AnyVec3 MLocal = .ShankResultantForceMoments.MLocal - .ExoAssistanceResultant.MLocal;
+    };
+    
+  }; // Shank  
+  
+  AnyFolder Foot = {
+    
+    // Foot Resultant
+    AnyForceMomentMeasure2 FootResultantForceMoments = {
+      AnyRefFrame &HumRef = ...Human.Foot.GroundJoint.GroundJointRotated;
+      IncludeForces = arrcat(
+      ObjSearchRecursive("...FootBase","*", "AnyForceBase"),
+      ObjSearchRecursive("...FootStrap","*", "AnyForceBase")
+      );
+      AnySeg &Foot = ...Human.Foot;
+      
+      AnyVec3 FLocal = F * HumRef.Axes;
+      AnyVec3 MLocal = M * HumRef.Axes;
+      AnyFloat FLocalRes = vnorm(FLocal);
+      AnyFloat FLocalResXY = sqrt(FLocal[0]^2 + FLocal[1]^2);
+      
+      AnyDrawLine ResForce_Line = {
+        AnyRefFrame &ref = .HumRef;
+        p0 = {0, 0, 0};
+        p1 = 0.001*{.FLocal[0], .FLocal[1], .FLocal[2]};
+        Line.Thickness = 0.01;
+        GlobalCoord=Off;
+        Line.RGB = {1, 0, 0}; 
+      };
+    }; // Foot Resultant
+    
+    // Foot Base Resultant
+    AnyForceMomentMeasure2 FootBaseResultantForceMoments = {
+      AnyRefFrame &HumRef = ...Human.Foot.GroundJoint.GroundJointRotated;
+      IncludeForces = arrcat(
+      ObjSearchRecursive("...FootBase","*", "AnyForceBase")
+      // ObjSearchRecursive("...FootStrap","*", "AnyForceBase")
+      );
+      AnySeg &Foot = ...Human.Foot;
+      
+      AnyVec3 FLocal = F * HumRef.Axes;
+      AnyVec3 MLocal = M * HumRef.Axes;
+      AnyFloat FLocalRes = vnorm(FLocal);
+      AnyFloat FLocalResXY = sqrt(FLocal[0]^2 + FLocal[1]^2);
+      
+      AnyDrawLine ResForce_Line = {
+        AnyRefFrame &ref = .HumRef;
+        p0 = {0, 0, 0};
+        p1 = 0.0001*{.FLocal[0], .FLocal[1], .FLocal[2]};
+        Line.Thickness = 0.01;
+        GlobalCoord=Off;
+        Line.RGB = {0.7, 0, 0}; 
+      };
+    }; // Foot Base Resultant
+    
+    // Foot Strap Resultant
+    AnyForceMomentMeasure2 FootStrapResultantForceMoments = {
+      AnyRefFrame &HumRef = ...Human.Foot.GroundJoint.GroundJointRotated;
+      IncludeForces = arrcat(
+      // ObjSearchRecursive("...FootBase","*", "AnyForceBase"),
+      ObjSearchRecursive("...FootStrap","*", "AnyForceBase")
+      );
+      AnySeg &Foot = ...Human.Foot;
+      
+      AnyVec3 FLocal = F * HumRef.Axes;
+      AnyVec3 MLocal = M * HumRef.Axes;
+      AnyFloat FLocalRes = vnorm(FLocal);
+      AnyFloat FLocalResXY = sqrt(FLocal[0]^2 + FLocal[1]^2);
+      
+      AnyDrawLine ResForce_Line = {
+        AnyRefFrame &ref = .HumRef;
+        p0 = {0, 0, 0};
+        p1 = 0.0001*{.FLocal[0], .FLocal[1], .FLocal[2]};
+        Line.Thickness = 0.01;
+        GlobalCoord=Off;
+        Line.RGB = {0.7, 0, 0}; 
+      };
+    }; // Foot Strap Resultant
+    
+    AnyFolder InterfaceForceElements = {
+      AnyFloat Strength_FootBase = ...StrengthValues.FootBase;
+      AnyFloat Strength_FootStrap = ...StrengthValues.FootStrap;
+      AnySearchFun MaxActFootBase = { Search = "....FootBase.Contacts.Contact*.Push.RefMuscles.*.Activity";};
+      AnyFloat MaxActivityFootBase = max(MaxActFootBase());
+      AnySearchFun MaxActFootStrap = { Search = "....FootStrap.VirtualForcePlates.ExoForcePlate*.Contacts.Contact0.Push.RefMuscles.*.Activity";};
+      AnyFloat MaxActivityFootStrap = max(MaxActFootStrap());
+    };
+    
+  }; // Foot
+  
+}; // Resultant

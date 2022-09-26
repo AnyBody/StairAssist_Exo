@@ -1,0 +1,1416 @@
+ AnyRefNode ConNode001 =
+{
+  sRel={-0.4522618402, 0.3133608539, -0.3593470878};
+  ARel=.ConPlane01.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode002 =
+{
+  sRel={-0.4522618402, 0.3133608539, -0.341162379};
+  ARel=.ConPlane01.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode003 =
+{
+  sRel={-0.4522618402, 0.3133608539, -0.3229776702};
+  ARel=.ConPlane01.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode004 =
+{
+  sRel={-0.4522618402, 0.3133608539, -0.3047929614};
+  ARel=.ConPlane01.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode005 =
+{
+  sRel={-0.4522618402, 0.3133608539, -0.2866082527};
+  ARel=.ConPlane01.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode006 =
+{
+  sRel={-0.4522618402, 0.3133608539, -0.2684235439};
+  ARel=.ConPlane01.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode007 =
+{
+  sRel={-0.4522618402, 0.3133608539, -0.2502388351};
+  ARel=.ConPlane01.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode008 =
+{
+  sRel={-0.4522618402, 0.3133608539, -0.2320541263};
+  ARel=.ConPlane01.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode009 =
+{
+  sRel={-0.4522618402, 0.3133608539, -0.2138694176};
+  ARel=.ConPlane01.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode010 =
+{
+  sRel={-0.4522618402, 0.3133608539, -0.1956847088};
+  ARel=.ConPlane01.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode011 =
+{
+  sRel={-0.4353606126, 0.3117752872, -0.3611500454};
+  ARel=.ConPlane02.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode012 =
+{
+  sRel={-0.4353606123, 0.3117752884, -0.3427850408};
+  ARel=.ConPlane02.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode013 =
+{
+  sRel={-0.435360612, 0.3117752896, -0.3244200363};
+  ARel=.ConPlane02.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode014 =
+{
+  sRel={-0.4353606117, 0.3117752908, -0.3060550318};
+  ARel=.ConPlane02.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode015 =
+{
+  sRel={-0.4353606115, 0.311775292, -0.2876900272};
+  ARel=.ConPlane02.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode016 =
+{
+  sRel={-0.4353606112, 0.3117752932, -0.2693250227};
+  ARel=.ConPlane02.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode017 =
+{
+  sRel={-0.4353606109, 0.3117752944, -0.2509600182};
+  ARel=.ConPlane02.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode018 =
+{
+  sRel={-0.4353606106, 0.3117752956, -0.2325950136};
+  ARel=.ConPlane02.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode019 =
+{
+  sRel={-0.4353606104, 0.3117752968, -0.2142300091};
+  ARel=.ConPlane02.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode020 =
+{
+  sRel={-0.4353606101, 0.3117752981, -0.1958650045};
+  ARel=.ConPlane02.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode021 =
+{
+  sRel={-0.4194339497, 0.3059213868, -0.3424750951};
+  ARel=.ConPlane03.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode022 =
+{
+  sRel={-0.41943395, 0.3059213862, -0.3241445289};
+  ARel=.ConPlane03.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode023 =
+{
+  sRel={-0.4194339503, 0.3059213856, -0.3058139628};
+  ARel=.ConPlane03.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode024 =
+{
+  sRel={-0.4194339506, 0.305921385, -0.2874833967};
+  ARel=.ConPlane03.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode025 =
+{
+  sRel={-0.4194339509, 0.3059213844, -0.2691528306};
+  ARel=.ConPlane03.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode026 =
+{
+  sRel={-0.4194339512, 0.3059213838, -0.2508222645};
+  ARel=.ConPlane03.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode027 =
+{
+  sRel={-0.4194339515, 0.3059213832, -0.2324916984};
+  ARel=.ConPlane03.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode028 =
+{
+  sRel={-0.4194339519, 0.3059213826, -0.2141611322};
+  ARel=.ConPlane03.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode029 =
+{
+  sRel={-0.4194339522, 0.305921382, -0.1958305661};
+  ARel=.ConPlane03.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode030 =
+{
+  sRel={-0.4055650886, 0.2961448084, -0.3238306027};
+  ARel=.ConPlane04.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode031 =
+{
+  sRel={-0.4055650885, 0.2961448085, -0.3055392773};
+  ARel=.ConPlane04.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode032 =
+{
+  sRel={-0.4055650885, 0.2961448085, -0.287247952};
+  ARel=.ConPlane04.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode033 =
+{
+  sRel={-0.4055650885, 0.2961448086, -0.2689566267};
+  ARel=.ConPlane04.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode034 =
+{
+  sRel={-0.4055650884, 0.2961448086, -0.2506653013};
+  ARel=.ConPlane04.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode035 =
+{
+  sRel={-0.4055650884, 0.2961448087, -0.232373976};
+  ARel=.ConPlane04.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode036 =
+{
+  sRel={-0.4055650883, 0.2961448087, -0.2140826507};
+  ARel=.ConPlane04.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode037 =
+{
+  sRel={-0.4055650883, 0.2961448087, -0.1957913253};
+  ARel=.ConPlane04.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode038 =
+{
+  sRel={-0.394699188, 0.2831118191, -0.2983580212};
+  ARel=.ConPlane05.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode039 =
+{
+  sRel={-0.3946991836, 0.2831118219, -0.2810925896};
+  ARel=.ConPlane05.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode040 =
+{
+  sRel={-0.3946991792, 0.2831118247, -0.263827158};
+  ARel=.ConPlane05.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode041 =
+{
+  sRel={-0.3946991749, 0.2831118275, -0.2465617264};
+  ARel=.ConPlane05.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode042 =
+{
+  sRel={-0.3946991705, 0.2831118302, -0.2292962948};
+  ARel=.ConPlane05.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode043 =
+{
+  sRel={-0.3946991661, 0.283111833, -0.2120308632};
+  ARel=.ConPlane05.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode044 =
+{
+  sRel={-0.3946991617, 0.2831118358, -0.1947654316};
+  ARel=.ConPlane05.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode045 =
+{
+  sRel={-0.38757666, 0.2677106446, -0.2513380032};
+  ARel=.ConPlane06.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode046 =
+{
+  sRel={-0.3875766587, 0.267710645, -0.2328785024};
+  ARel=.ConPlane06.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode047 =
+{
+  sRel={-0.3875766574, 0.2677106454, -0.2144190016};
+  ARel=.ConPlane06.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode048 =
+{
+  sRel={-0.3875766562, 0.2677106458, -0.1959595008};
+  ARel=.ConPlane06.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode049 =
+{
+  sRel={-0.3843193003, 0.2510055237, -0.2460370111};
+  ARel=.ConPlane07.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode050 =
+{
+  sRel={-0.3843193004, 0.2510055237, -0.2289027584};
+  ARel=.ConPlane07.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode051 =
+{
+  sRel={-0.3843193004, 0.2510055237, -0.2117685056};
+  ARel=.ConPlane07.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode052 =
+{
+  sRel={-0.3843193005, 0.2510055237, -0.1946342528};
+  ARel=.ConPlane07.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode053 =
+{
+  sRel={-0.3831976323, 0.2334127061, -0.2451218683};
+  ARel=.ConPlane08.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode054 =
+{
+  sRel={-0.3831976316, 0.2334127059, -0.2282164012};
+  ARel=.ConPlane08.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode055 =
+{
+  sRel={-0.3831976308, 0.2334127057, -0.2113109341};
+  ARel=.ConPlane08.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode056 =
+{
+  sRel={-0.3831976301, 0.2334127056, -0.1944054671};
+  ARel=.ConPlane08.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode057 =
+{
+  sRel={-0.3923082177, 0.1955009962, -0.2315};
+  ARel=.ConPlane09.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode058 =
+{
+  sRel={-0.3923082177, 0.1955009962, -0.2165};
+  ARel=.ConPlane09.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode059 =
+{
+  sRel={-0.4095515485, 0.1850095976, -0.2315};
+  ARel=.ConPlane10.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode060 =
+{
+  sRel={-0.4095515485, 0.1850095976, -0.2165};
+  ARel=.ConPlane10.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode061 =
+{
+  sRel={-0.4283023286, 0.1799657121, -0.2317060161};
+  ARel=.ConPlane11.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode062 =
+{
+  sRel={-0.4283023286, 0.1799657121, -0.216603008};
+  ARel=.ConPlane11.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode063 =
+{
+  sRel={-0.4468672058, 0.1801397032, -0.2165};
+  ARel=.ConPlane12.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode064 =
+{
+  sRel={-0.4468672058, 0.1801397032, -0.2315};
+  ARel=.ConPlane12.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode065 =
+{
+  sRel={-0.4639221499, 0.1848429613, -0.2165};
+  ARel=.ConPlane13.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode066 =
+{
+  sRel={-0.4639221499, 0.1848429613, -0.2315};
+  ARel=.ConPlane13.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode067 =
+{
+  sRel={-0.4785827783, 0.1931693142, -0.2165};
+  ARel=.ConPlane14.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode068 =
+{
+  sRel={-0.4785827783, 0.1931693142, -0.2315};
+  ARel=.ConPlane14.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode069 =
+{
+  sRel={-0.4903560093, 0.2041970624, -0.2165};
+  ARel=.ConPlane15.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode070 =
+{
+  sRel={-0.4903560093, 0.2041970624, -0.2315};
+  ARel=.ConPlane15.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode071 =
+{
+  sRel={-0.4970809216, 0.2335643218, -0.2100346811};
+  ARel=.ConPlane16.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode072 =
+{
+  sRel={-0.4970809219, 0.2335643217, -0.2279010068};
+  ARel=.ConPlane16.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode073 =
+{
+  sRel={-0.4970809222, 0.2335643216, -0.2457673324};
+  ARel=.ConPlane16.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode074 =
+{
+  sRel={-0.4970809225, 0.2335643215, -0.263633658};
+  ARel=.ConPlane16.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode075 =
+{
+  sRel={-0.4970809228, 0.2335643215, -0.2814999837};
+  ARel=.ConPlane16.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode076 =
+{
+  sRel={-0.497080923, 0.2335643214, -0.2993663093};
+  ARel=.ConPlane16.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode077 =
+{
+  sRel={-0.4970809233, 0.2335643213, -0.3172326349};
+  ARel=.ConPlane16.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode078 =
+{
+  sRel={-0.4970809236, 0.2335643212, -0.3350989606};
+  ARel=.ConPlane16.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode079 =
+{
+  sRel={-0.4970809239, 0.2335643211, -0.3529652862};
+  ARel=.ConPlane16.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode080 =
+{
+  sRel={-0.4988142889, 0.2463691832, -0.1983895098};
+  ARel=.ConPlane17.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode081 =
+{
+  sRel={-0.4988142889, 0.2463691832, -0.2168585073};
+  ARel=.ConPlane17.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode082 =
+{
+  sRel={-0.4988142888, 0.2463691832, -0.2353275048};
+  ARel=.ConPlane17.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode083 =
+{
+  sRel={-0.4988142888, 0.2463691832, -0.2537965023};
+  ARel=.ConPlane17.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode084 =
+{
+  sRel={-0.4988142888, 0.2463691832, -0.2722654998};
+  ARel=.ConPlane17.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode085 =
+{
+  sRel={-0.4988142888, 0.2463691832, -0.2907344973};
+  ARel=.ConPlane17.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode086 =
+{
+  sRel={-0.4988142888, 0.2463691832, -0.3092034949};
+  ARel=.ConPlane17.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode087 =
+{
+  sRel={-0.4988142887, 0.2463691832, -0.3276724924};
+  ARel=.ConPlane17.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode088 =
+{
+  sRel={-0.4988142887, 0.2463691832, -0.3461414899};
+  ARel=.ConPlane17.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode089 =
+{
+  sRel={-0.4988142887, 0.2463691832, -0.3646104874};
+  ARel=.ConPlane17.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode090 =
+{
+  sRel={-0.4983195528, 0.2593167381, -0.1956050566};
+  ARel=.ConPlane18.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode091 =
+{
+  sRel={-0.4983195526, 0.2593167381, -0.2146928216};
+  ARel=.ConPlane18.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode092 =
+{
+  sRel={-0.4983195525, 0.259316738, -0.2337805867};
+  ARel=.ConPlane18.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode093 =
+{
+  sRel={-0.4983195523, 0.259316738, -0.2528683517};
+  ARel=.ConPlane18.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode094 =
+{
+  sRel={-0.4983195521, 0.259316738, -0.2719561168};
+  ARel=.ConPlane18.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode095 =
+{
+  sRel={-0.4983195519, 0.2593167379, -0.2910438819};
+  ARel=.ConPlane18.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode096 =
+{
+  sRel={-0.4983195517, 0.2593167379, -0.3101316469};
+  ARel=.ConPlane18.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode097 =
+{
+  sRel={-0.4983195516, 0.2593167378, -0.329219412};
+  ARel=.ConPlane18.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode098 =
+{
+  sRel={-0.4983195514, 0.2593167378, -0.348307177};
+  ARel=.ConPlane18.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode099 =
+{
+  sRel={-0.4983195512, 0.2593167378, -0.3673949421};
+  ARel=.ConPlane18.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode100 =
+{
+  sRel={-0.4954724624, 0.2724095759, -0.1977636772};
+  ARel=.ConPlane19.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode101 =
+{
+  sRel={-0.4954724674, 0.2724095785, -0.2163717363};
+  ARel=.ConPlane19.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode102 =
+{
+  sRel={-0.4954724723, 0.2724095811, -0.2349797954};
+  ARel=.ConPlane19.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode103 =
+{
+  sRel={-0.4954724773, 0.2724095837, -0.2535878545};
+  ARel=.ConPlane19.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode104 =
+{
+  sRel={-0.4954724823, 0.2724095863, -0.2721959136};
+  ARel=.ConPlane19.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode105 =
+{
+  sRel={-0.4954724872, 0.2724095889, -0.2908039727};
+  ARel=.ConPlane19.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode106 =
+{
+  sRel={-0.4954724922, 0.2724095915, -0.3094120318};
+  ARel=.ConPlane19.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode107 =
+{
+  sRel={-0.4954724971, 0.2724095941, -0.3280200908};
+  ARel=.ConPlane19.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode108 =
+{
+  sRel={-0.4954725021, 0.2724095967, -0.3466281499};
+  ARel=.ConPlane19.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode109 =
+{
+  sRel={-0.495472507, 0.2724095993, -0.365236209};
+  ARel=.ConPlane19.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode110 =
+{
+  sRel={-0.489943093, 0.285536384, -0.2096721843};
+  ARel=.ConPlane20.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode111 =
+{
+  sRel={-0.4899430928, 0.2855363838, -0.2276291411};
+  ARel=.ConPlane20.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode112 =
+{
+  sRel={-0.4899430925, 0.2855363836, -0.245586098};
+  ARel=.ConPlane20.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode113 =
+{
+  sRel={-0.4899430923, 0.2855363834, -0.2635430548};
+  ARel=.ConPlane20.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode114 =
+{
+  sRel={-0.4899430921, 0.2855363832, -0.2815000117};
+  ARel=.ConPlane20.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode115 =
+{
+  sRel={-0.4899430919, 0.285536383, -0.2994569685};
+  ARel=.ConPlane20.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode116 =
+{
+  sRel={-0.4899430917, 0.2855363828, -0.3174139254};
+  ARel=.ConPlane20.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode117 =
+{
+  sRel={-0.4899430915, 0.2855363826, -0.3353708822};
+  ARel=.ConPlane20.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode118 =
+{
+  sRel={-0.4899430912, 0.2855363824, -0.3533278391};
+  ARel=.ConPlane20.ARel;
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};

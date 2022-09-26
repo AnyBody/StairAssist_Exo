@@ -1,0 +1,54 @@
+// These are selected results that are to be exported. They have  final values only. Do Not add classes here
+
+// EXO FORCE
+
+AnyFolder _LExoForce = {
+  AnyFloat _ActuatorForce_N = -Main.ExoV2.ForceFile_Left.Force_Left.F;
+  // Exo Thigh Force on Knee in Human Shank ref system. Extension moment by exo results as positive moment about Y-axis.
+  AnyFloat _Knee_FLocal_X_N = Main.ExoV2.ForceFile_Left.ResultantExoForceOnKnee.ExoForceOnShankKnee.FLocal[0];
+  AnyFloat _Knee_FLocal_Y_N = Main.ExoV2.ForceFile_Left.ResultantExoForceOnKnee.ExoForceOnShankKnee.FLocal[1];
+  AnyFloat _Knee_FLocal_Z_N = Main.ExoV2.ForceFile_Left.ResultantExoForceOnKnee.ExoForceOnShankKnee.FLocal[2];
+  
+  AnyFloat _Knee_MLocal_X_Nm = Main.ExoV2.ForceFile_Left.ResultantExoForceOnKnee.ExoForceOnShankKnee.MLocal[0];
+  AnyFloat _Knee_MLocal_Y_Nm = Main.ExoV2.ForceFile_Left.ResultantExoForceOnKnee.ExoForceOnShankKnee.MLocal[1];
+  AnyFloat _Knee_MLocal_Z_Nm = Main.ExoV2.ForceFile_Left.ResultantExoForceOnKnee.ExoForceOnShankKnee.MLocal[2];
+};
+
+AnyFolder _RExoForce = {
+  AnyFloat _ActuatorForce_N = -Main.ExoV2.ForceFile_Right.Force_Right.F;
+  // Exo Thigh Force on Knee in Human Shank ref system. Extension moment by exo results as positive moment about Y-axis.
+  AnyFloat _Knee_FLocal_X_N = Main.ExoV2.ForceFile_Right.ResultantExoForceOnKnee.ExoForceOnShankKnee.FLocal[0];
+  AnyFloat _Knee_FLocal_Y_N = Main.ExoV2.ForceFile_Right.ResultantExoForceOnKnee.ExoForceOnShankKnee.FLocal[1];
+  AnyFloat _Knee_FLocal_Z_N = Main.ExoV2.ForceFile_Right.ResultantExoForceOnKnee.ExoForceOnShankKnee.FLocal[2];
+  
+  AnyFloat _Knee_MLocal_X_Nm = Main.ExoV2.ForceFile_Right.ResultantExoForceOnKnee.ExoForceOnShankKnee.MLocal[0];
+  AnyFloat _Knee_MLocal_Y_Nm = Main.ExoV2.ForceFile_Right.ResultantExoForceOnKnee.ExoForceOnShankKnee.MLocal[1];
+  AnyFloat _Knee_MLocal_Z_Nm = Main.ExoV2.ForceFile_Right.ResultantExoForceOnKnee.ExoForceOnShankKnee.MLocal[2];
+};
+
+// GROUND REACTION FORCES
+
+AnyFolder _R_GRF_ = {
+  AnyFloat FLocal_X_N = -Main.EnvironmentModel.ForcePlates.Plate3.ForcePlate.NetEffectMeasure.Flocal[0];
+  AnyFloat FLocal_Y_N = -Main.EnvironmentModel.ForcePlates.Plate3.ForcePlate.NetEffectMeasure.Flocal[1];
+  AnyFloat FLocal_Z_N = -Main.EnvironmentModel.ForcePlates.Plate3.ForcePlate.NetEffectMeasure.Flocal[2];
+  
+  AnyFloat MLocal_X_Nm = -Main.EnvironmentModel.ForcePlates.Plate3.ForcePlate.NetEffectMeasure.Mlocal[0];
+  AnyFloat MLocal_Y_Nm = -Main.EnvironmentModel.ForcePlates.Plate3.ForcePlate.NetEffectMeasure.Mlocal[1];
+  AnyFloat MLocal_Z_Nm = -Main.EnvironmentModel.ForcePlates.Plate3.ForcePlate.NetEffectMeasure.Mlocal[2];
+  // Force Plate Ref Frame is slightly misaligned with GlobalRef Frame. Negative sign is to have vertical value as positive.
+}; // GRF
+
+// RESIDUALS
+
+AnyFolder _Residuals_ = {
+  AnyFloat FGlobal_X_N = Main.Studies.InverseDynamicStudy.ModelEnvironmentConnection.HumanGroundResiduals.Fout[0];
+  AnyFloat FGlobal_Y_N = Main.Studies.InverseDynamicStudy.ModelEnvironmentConnection.HumanGroundResiduals.Fout[1];
+  AnyFloat FGlobal_Z_N = Main.Studies.InverseDynamicStudy.ModelEnvironmentConnection.HumanGroundResiduals.Fout[2];
+  
+  AnyFloat MGlobal_X_N = Main.Studies.InverseDynamicStudy.ModelEnvironmentConnection.HumanGroundResiduals.Fout[3];
+  AnyFloat MGlobal_Y_N = Main.Studies.InverseDynamicStudy.ModelEnvironmentConnection.HumanGroundResiduals.Fout[4];
+  AnyFloat MGlobal_Z_N = Main.Studies.InverseDynamicStudy.ModelEnvironmentConnection.HumanGroundResiduals.Fout[5];
+}; // Residuals
+
+

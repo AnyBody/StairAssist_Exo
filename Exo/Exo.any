@@ -1,0 +1,64 @@
+AnyFolder ExoV2 = {
+  
+  // Include the CAD model of the exo translated using the AnyExp4SOLIDWORKS translator add-in for SolidWorks
+  #include "LExo.any"
+  #include "RExo.any"
+  
+  // Include external assistive force from the exoskeleton. The force is read from a text file containing
+  // the assistive force recorded during the experiments.
+  #include "Force_Left.any"  // Applies assistance on the left exo    
+  #include "Force_Right.any"  // Applies assistance on the right exo
+  
+  // Include reference nodes on the exo for the interface model using contact elements (or recruited actuators). The 
+  // reference nodes were created as reference geometry in SolidWorks CAD model and translated through the add-in.
+  #include "LCreateConNodesOnExo.any"
+  #include "RCreateConNodesOnExo.any"
+  
+  /// Include reference nodes on the human for the interface model using contact elements (or recruited actuators). The
+  /// contact nodes on the human must correspond to the contact nodes on the exoskeleton. To ensure this, a reference 
+  /// node is created on the human to be coincident to the origin of the exoskeleton segment. This is done using a custom
+  /// class template. Then, the same set of contact nodes from the exoskeleton (created in SolidWorks) are included
+  /// under this reference node on the human.
+  AnyFolder NodesOnHuman = {
+    AnyFolder DesignVariables = {};
+    #include "LCreateConNodesOnHuman.any"
+    #include "RCreateConNodesOnHuman.any"
+  };
+
+  // Exclude the driver that was used to define the refence node on the human corresponding to the origin of the exo
+  // segment from the inverse dynamics study
+  Main.Studies.InverseDynamicStudy = {
+    AnyMechObjectExcluder ExcludeHumanNodeDriver = {
+      Objects = ObjSearchRecursive("Main.ExoV2.NodesOnHuman", "DriveHumanToExo", "AnyKinEq");
+    };
+  };
+
+  // Prepare folders and references for the interface model. 
+  AnyFolder Interface_Left = {    
+    AnyFolder &Human = Main.HumanModel.BodyModel.Left.Leg.Seg;
+    AnyFolder &Exo = .Left;
+    AnyFolder &ExoForce = .ForceFile_Left.Force_Left;
+    #include "Interface/CreateMeasure_HumanExo.any"
+  };
+  
+  AnyFolder Interface_Right = {    
+    AnyFolder &Human = Main.HumanModel.BodyModel.Right.Leg.Seg;
+    AnyFolder &Exo = .Right;
+    AnyFolder &ExoForce = .ForceFile_Right.Force_Right;
+    #include "Interface/CreateMeasure_HumanExo.any"
+  };
+  
+  // Select interface model here.
+  #include "InterfaceSelection.any"  
+  
+  // Switch off Exo joint reactions so the human does the work
+  Main.Studies.InverseDynamicStudy.ModelEnvironmentConnection.JointsAndDrivers = {
+    JntDriverLExo.Reaction.Type = {Off, Off}; // Ankle, Knee rotation
+    JntDriverRExo.Reaction.Type = {Off, Off}; // Ankle, Knee rotation
+    JntDriverLExoShankFull.Reaction.Type = {Off, Off, Off, Off, Off, Off}; // Shank pos x,y,z and rot x,y,z
+    JntDriverRExoShankFull.Reaction.Type = {Off, Off, Off, Off, Off, Off}; // Shank pos x,y,z and rot x,y,z
+  };
+  
+}; // ExoV2
+
+

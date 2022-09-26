@@ -1,0 +1,112 @@
+// These are selected results that are to be exported. They have  final values only. Do Not add classes here
+
+    
+    // JOINT MOMENTS
+    
+    AnyFolder _JntMoment_ = {
+      AnyFloat L_HipFlex = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointMomentMeasure.HipFlexion;
+      AnyFloat L_HipAbd = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointMomentMeasure.HipAbduction;
+      AnyFloat L_HipExRot = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointMomentMeasure.HipExternalRotation;
+      AnyFloat L_KneeFlex = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointMomentMeasure.KneeFlexion;
+      AnyFloat L_AnklePlantarFlex = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointMomentMeasure.AnklePlantarFlexion;
+      AnyFloat L_AnkleSubTalarEversion = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointMomentMeasure.SubTalarEversion;
+
+      AnyFloat R_HipFlex = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointMomentMeasure.HipFlexion;
+      AnyFloat R_HipAbd = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointMomentMeasure.HipAbduction;
+      AnyFloat R_HipExRot = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointMomentMeasure.HipExternalRotation;
+      AnyFloat R_KneeFlex = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointMomentMeasure.KneeFlexion;
+      AnyFloat R_AnklePlantarFlex = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointMomentMeasure.AnklePlantarFlexion;
+      AnyFloat R_AnkleSubTalarEversion = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointMomentMeasure.SubTalarEversion;
+    }; // JntMoment folder
+    
+    // JOINT REACTION FORCES
+    
+    AnyFolder _JntRF_ = {
+      AnyFloat L_HipCompres = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointReactionForce.Hip_ProximoDistalForce;
+      AnyFloat L_HipAPShear = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointReactionForce.Hip_AnteroPosteriorForce;
+      AnyFloat L_HipMLShear = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointReactionForce.Hip_MediolateralForce;
+      
+      AnyFloat L_KneeCompres = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointReactionForce.Knee_ProximoDistalForce;
+      AnyFloat L_KneeAPShear = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointReactionForce.Knee_AnteroPosteriorForce;
+      AnyFloat L_KneeMLShear = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointReactionForce.Knee_MedioLateralForce;
+      AnyFloat L_KneeAxialMoment = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointReactionForce.Knee_AxialMoment;
+      AnyFloat L_KneeLateralMoment = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointReactionForce.Knee_LateralMoment;
+      
+      AnyFloat L_AnkleCompres = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointReactionForce.Ankle_ProximoDistalForce;
+      AnyFloat L_AnkleAPShear = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointReactionForce.Ankle_AnteroPosteriorForce;
+      AnyFloat L_AnkleMLShear = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointReactionForce.Ankle_MedioLateralForce;
+      AnyFloat L_AnkleAxialMoment = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.JointReactionForce.Ankle_AxialMoment;
+
+      AnyFloat R_HipCompres = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointReactionForce.Hip_ProximoDistalForce;
+      AnyFloat R_HipAPShear = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointReactionForce.Hip_AnteroPosteriorForce;
+      AnyFloat R_HipMLShear = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointReactionForce.Hip_MediolateralForce;
+      
+      AnyFloat R_KneeCompres = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointReactionForce.Knee_ProximoDistalForce;
+      AnyFloat R_KneeAPShear = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointReactionForce.Knee_AnteroPosteriorForce;
+      AnyFloat R_KneeMLShear = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointReactionForce.Knee_MedioLateralForce;
+      AnyFloat R_KneeAxialMoment = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointReactionForce.Knee_AxialMoment;
+      AnyFloat R_KneeLateralMoment = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointReactionForce.Knee_LateralMoment;
+      
+      AnyFloat R_AnkleCompres = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointReactionForce.Ankle_ProximoDistalForce;
+      AnyFloat R_AnkleAPShear = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointReactionForce.Ankle_AnteroPosteriorForce;
+      AnyFloat R_AnkleMLShear = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointReactionForce.Ankle_MedioLateralForce;
+      AnyFloat R_AnkleAxialMoment = -Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.JointReactionForce.Ankle_AxialMoment;
+    }; // JntRF folder
+    
+    // MUSCLE ACTIVATION
+    
+    AnyFolder _MusAct_ = {
+      AnyFloat MMA = 100*Main.Studies.InverseDynamicStudy.MaxMuscleActivity;
+      AnyFloat L_Leg = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.Envelope;
+      
+      AnyFloat L_HipAbductorEnv = 100*max(Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.HipAbductorMuscleActivity);
+      AnyFloat L_HipAdductorEnv = 100*max(Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.HipAdductorMuscleActivity);
+      AnyFloat L_HipFlexorEnv = 100*max(Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.HipFlexorMuscleActivity);
+      AnyFloat L_HipExtensorEnv = 100*max(Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.HipExtensorMuscleActivity);
+      AnyFloat L_KneeFlexorEnv = 100*max(Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.KneeFlexorMuscleActivity);
+      
+      AnyFloat R_Leg = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.Envelope;
+      
+      AnyFloat R_HipAbductorEnv = 100*max(Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.HipAbductorMuscleActivity);
+      AnyFloat R_HipAdductorEnv = 100*max(Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.HipAdductorMuscleActivity);
+      AnyFloat R_HipFlexorEnv = 100*max(Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.HipFlexorMuscleActivity);
+      AnyFloat R_HipExtensorEnv = 100*max(Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.HipExtensorMuscleActivity);
+      AnyFloat R_KneeFlexorEnv = 100*max(Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.KneeFlexorMuscleActivity);
+
+      //SELECTED ACTIVITIES
+      
+      AnyFloat L_VastusLateralis = 100*..SelectedMuscleActivities.Left.EnvelopeVastusLateralis;
+      AnyFloat L_VastusMedialis = 100*..SelectedMuscleActivities.Left.EnvelopeVastusMedialis;
+      AnyFloat L_VastusIntermedius = 100*..SelectedMuscleActivities.Left.EnvelopeVastusIntermedius;
+      AnyFloat L_RectusFemoris = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.MuscleActivity.RectusFemorisActivity;  
+      AnyFloat L_GluteusMaximus = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.MuscleActivity.GluteusMaxActivity;
+      AnyFloat L_Semimembranosus = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.MuscleActivity.SemimembranosusActivity;
+      AnyFloat L_Semitendinosus = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.MuscleActivity.SemitendinosusActivity;
+      AnyFloat L_BicepsFemorisCaputLong = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.MuscleActivity.BicepsFemorisCaputLongActivity;
+      AnyFloat L_Gracilis = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.MuscleActivity.GracilisActivity;
+      AnyFloat L_Gastrocnemius = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.MuscleActivity.GastrocActivity;
+      AnyFloat L_Soleus = 100*..SelectedMuscleActivities.Left.EnvelopeSoleus;
+      AnyFloat L_TibialisAnterior = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.MuscleActivity.TibialisAnteriorActivity;      
+
+      AnyFloat R_VastusLateralis = 100*..SelectedMuscleActivities.Right.EnvelopeVastusLateralis;
+      AnyFloat R_VastusMedialis = 100*..SelectedMuscleActivities.Right.EnvelopeVastusMedialis;
+      AnyFloat R_VastusIntermedius = 100*..SelectedMuscleActivities.Right.EnvelopeVastusIntermedius;
+      AnyFloat R_RectusFemoris = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.MuscleActivity.RectusFemorisActivity;  
+      AnyFloat R_GluteusMaximus = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.MuscleActivity.GluteusMaxActivity;
+      AnyFloat R_Semimembranosus = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.MuscleActivity.SemimembranosusActivity;
+      AnyFloat R_Semitendinosus = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.MuscleActivity.SemitendinosusActivity;
+      AnyFloat R_BicepsFemorisCaputLong = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.MuscleActivity.BicepsFemorisCaputLongActivity;
+      AnyFloat R_Gracilis = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.MuscleActivity.GracilisActivity;
+      AnyFloat R_Gastrocnemius = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.MuscleActivity.GastrocActivity;
+      AnyFloat R_Soleus = 100*..SelectedMuscleActivities.Right.EnvelopeSoleus;
+      AnyFloat R_TibialisAnterior = 100*Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.MuscleActivity.TibialisAnteriorActivity;      
+    }; // MusAct folder
+    
+    // MUSCLE FORCES
+    
+    AnyFolder _MusForce_ = {
+      AnyFloat L_KneeFlexorForce = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Left.Leg.Muscles.KneeFlexorMuscleForce;
+      AnyFloat R_KneeFlexorForce = Main.Studies.InverseDynamicStudy.BodyModel.SelectedOutput.Right.Leg.Muscles.KneeFlexorMuscleForce;
+    }; // MusForce folder
+    
+    

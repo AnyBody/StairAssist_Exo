@@ -1,0 +1,145 @@
+//Class template to create reference node on the human segment corresponding to the exo segment.
+//The class creates a reference node on the human using a design variable. 
+//A soft driver is created between the human node and the exo segment.
+//The design variable is inserted in the parameter identification study.
+//The parameter identification study will optimize the location of the design variable 
+//to respect the soft driver and the optimized values will be saved in the same file 
+//as the optimized marker values. This file can be subsequently loaded before running the analysis.
+//
+//  USE INITIAL GUESS TO HELP THE PARAMETER OPTIMIZATION STUDY CONVERGE TO A SOLUTION
+//
+//********************************************************************************************************************
+//   CreateExoOriginOnHuman 
+//   EXO_SEG:               
+//   Type AnySeg or AnyRefNode: Pointer to the exoskeleton segment (or a specific node on the segment)
+//   
+//   HUMAN_SEG:             
+//   Type AnySeg or AnyRefNode: Pointer to the human segment (or a specific node on the segment), on which the ref node is created.
+//   
+//   NAME_PARA_OPT:         
+//   Name of the design variable to be inserted in the parameter identification study. MUST BE UNIQUELY NAMED FOR EACH IMPLEMENTATION
+//   
+//   OPT_LIN_X = 1, OPT_LIN_Y = 1, OPT_LIN_Z = 1,
+//   OPT_ROT_X = 1, OPT_ROT_Y = 1, OPT_ROT_Z = 1,
+//   OPTIONAL Switches to include design variables in the parameter identification study. Default is ON
+//
+//   PARAMETER_OPT_STUDY = Main.Studies.ParameterIdentification:    
+//   OPTIONAL pointer to the parameter identification study.
+//   
+//   {
+//     Initial_Guess: (default = {0,0,0,0,0,0})      
+//     OPTIONAL initial guess of the ref node on human {LinX, LinY, LinZ, RotX, RotY, RotZ} (in meters or radians - type = RotAxesAngles)
+//
+//     NodeVisibility: (default = Off)      
+//     OPTIONAL switch for the visibility of the created reference node on human. On/Off 
+//   }
+//********************************************************************************************************************
+
+#class_template CreateExoOriginOnHuman (
+EXO_SEG,
+HUMAN_SEG,
+NAME_PARA_OPT,
+OPT_LIN_X = 1, OPT_LIN_Y = 1, OPT_LIN_Z = 1,
+OPT_ROT_X = 1, OPT_ROT_Y = 1, OPT_ROT_Z = 1,
+PARAMETER_OPT_STUDY = Main.Studies.ParameterIdentification)
+
+{
+  #var AnyFloat Initial_Guess = {0,0,0,0,0,0};
+  #var AnySwitch NodeVisibility = Off;
+  
+  AnyFloat NAME_PARA_OPT = DesignVar(Initial_Guess);
+    
+  AnyFolder &HumanSeg = HUMAN_SEG;
+  AnyFolder &ExoSeg = EXO_SEG;
+  
+  HumanSeg = {
+    AnyRefNode ExoRefNode = {
+      sRel = {0,0,0} + {..NAME_PARA_OPT[0], ..NAME_PARA_OPT[1], ..NAME_PARA_OPT[2]};
+      ARel = {{1,0,0},{0,1,0},{0,0,1}}  
+              * RotMat(..NAME_PARA_OPT[3],x)
+              * RotMat(..NAME_PARA_OPT[4],y)
+              * RotMat(..NAME_PARA_OPT[5],z);
+      AnyDrawRefFrame drw = {ScaleXYZ = {1,1,1}; RGB = {0,1,0.9}; Visible =...NodeVisibility;};
+    };
+  };
+  
+  AnyKinEqSimpleDriver DriveHumanToExo = {
+    AnyKinMeasureOrg Measure = {
+      AnyKinLinear Lin = {
+        AnyRefFrame &Human = ...HumanSeg.ExoRefNode;
+        AnyRefFrame &Exo = ...ExoSeg;
+        Ref = 0;
+      };
+      AnyKinRotational Rot = {
+        AnyRefFrame &Human = ...HumanSeg.ExoRefNode;
+        AnyRefFrame &Exo = ...ExoSeg;
+        Type = RotAxesAngles;
+        Axis1 = x;
+        Axis2 = y;
+        Axis3 = z;
+      };
+    };
+    DriverPos = {0,0,0,0,0,0};
+    DriverVel = {0,0,0,0,0,0};
+    CType = {Soft,Soft,Soft,Soft,Soft,Soft};
+    Reaction.Type = {Off,Off,Off,Off,Off,Off};
+    WeightFun = {&DriverWeight};
+    AnyFunConst DriverWeight = { Value = 0.01*{1,1,1,1,1,1};};
+  };
+  
+  Main.ExoV2.NodesOnHuman.DesignVariables = {
+    AnyDesVar NAME_PARA_OPT##_LinX = {
+      Val = ..NAME_PARA_OPT.NAME_PARA_OPT[0];
+      Min = -20;
+      Max = 20;
+    };
+    AnyDesVar NAME_PARA_OPT##_LinY = {
+      Val = ..NAME_PARA_OPT.NAME_PARA_OPT[1];
+      Min = -20;
+      Max = 20;
+    };
+    AnyDesVar NAME_PARA_OPT##_LinZ = {
+      Val = ..NAME_PARA_OPT.NAME_PARA_OPT[2];
+      Min = -20;
+      Max = 20;
+    };
+    AnyDesVar NAME_PARA_OPT##_RotX = {
+      Val = ..NAME_PARA_OPT.NAME_PARA_OPT[3];
+      Min = -pi;
+      Max = pi;
+    };
+    AnyDesVar NAME_PARA_OPT##_RotY = {
+      Val = ..NAME_PARA_OPT.NAME_PARA_OPT[4];
+      Min = -pi;
+      Max = pi;
+    };
+    AnyDesVar NAME_PARA_OPT##_RotZ = {
+      Val = ..NAME_PARA_OPT.NAME_PARA_OPT[5];
+      Min = -pi;
+      Max = pi;
+    };
+  };
+    
+  PARAMETER_OPT_STUDY = {
+    #if OPT_LIN_X == 1
+    AnyDesVar &NAME_PARA_OPT##_LinX = Main.ExoV2.NodesOnHuman.DesignVariables.NAME_PARA_OPT##_LinX;
+    #endif
+    #if OPT_LIN_Y == 1
+    AnyDesVar &NAME_PARA_OPT##_LinY = Main.ExoV2.NodesOnHuman.DesignVariables.NAME_PARA_OPT##_LinY;
+    #endif
+    #if OPT_LIN_Z == 1
+    AnyDesVar &NAME_PARA_OPT##_LinZ = Main.ExoV2.NodesOnHuman.DesignVariables.NAME_PARA_OPT##_LinZ;
+    #endif
+    #if OPT_ROT_X == 1
+    AnyDesVar &NAME_PARA_OPT##_RotX = Main.ExoV2.NodesOnHuman.DesignVariables.NAME_PARA_OPT##_RotX;
+    #endif
+    #if OPT_ROT_Y == 1
+    AnyDesVar &NAME_PARA_OPT##_RotY = Main.ExoV2.NodesOnHuman.DesignVariables.NAME_PARA_OPT##_RotY;
+    #endif
+    #if OPT_ROT_Z == 1
+    AnyDesVar &NAME_PARA_OPT##_RotZ = Main.ExoV2.NodesOnHuman.DesignVariables.NAME_PARA_OPT##_RotZ;
+    #endif
+  };
+  
+};
+      

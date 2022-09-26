@@ -1,0 +1,919 @@
+// EXAMPLE of MarkerProcol file for the plug-in-gait protocol. 
+
+// Marker on the Exoskeleton 
+
+//Left Exo
+#define _ELFAL
+#define _ELFLE
+#define _ELOSS1
+#define _ELOSS2
+#define _ELSK1
+#define _ELSK2
+#define _ELSK3
+#define _ELTH1
+#define _ELTH2
+#define _ELTH3
+#define _ELTH4
+#define _ELUSS1
+#define _ELUSS2
+#define _ELFS1
+#define _ELFSS1
+#define _ELFSS2
+#define _ELFSS3
+#define _ELFM5
+
+//Right Exo
+#define _ERFAL
+#define _ERFLE
+#define _EROSS1
+#define _EROSS2
+#define _ERSK1
+#define _ERSK2
+#define _ERSK3
+#define _ERTH1
+#define _ERTH2
+#define _ERTH3
+#define _ERTH4
+#define _ERUSS1
+#define _ERUSS2
+#define _ERFS1
+#define _ERFSS1
+#define _ERFSS2
+#define _ERFSS3
+#define _ERFM5
+
+//Marker for the Static Measurement
+#define _LFAL
+#define _LTAM
+#define _LFME
+#define _LFLE
+#define _RFAL
+#define _RTAM
+#define _RFME
+#define _RFLE
+
+//Marker on the Shoulder
+#define _LSHO
+#define _RSHO
+
+//Marker on the hip
+#define _LIPS
+#define _RIPS
+#define _RIAS
+#define _LIAS
+
+//Marker on the legs
+#define _LFCC
+#define _LFM1
+#define _LFM2
+#define _LSK1
+#define _LSK2
+#define _LSK3
+#define _RFCC
+#define _RFM1
+#define _RFM2
+#define _RSK1
+#define _RSK2
+#define _RSK3
+
+//Marker on the hip
+
+#ifdef _LIPS
+// Marker on the Left Posterior Superior Iliac
+CreateMarkerDriver L_IPS ( 
+MarkerName= L_IPS,
+MarkerPlacement=Trunk.SegmentsLumbar.PelvisSeg,
+OptX=OFF, OptY=OFF, OptZ=OFF,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt ={-0.13, 0.02, -0.045};
+};
+#endif
+
+#ifdef _RIPS
+// Marker on the Right Posterior Superior Iliac
+CreateMarkerDriver R_IPS (
+MarkerName= R_IPS, 
+MarkerPlacement=Trunk.SegmentsLumbar.PelvisSeg,
+OptX=OFF, OptY=OFF, OptZ=OFF,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt = {-0.13, 0.02, 0.04}; 
+};
+#endif
+
+#ifdef _RIAS
+// Marker on the Right Anterior Superior Iliac
+CreateMarkerDriver R_IAS (
+MarkerName= R_IAS, 
+MarkerPlacement=Trunk.SegmentsLumbar.PelvisSeg,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt =  {0.027, 0.01, 0.11};
+};
+#endif
+
+#ifdef _LIAS
+// Marker on the Left Anterior Superior Iliac
+CreateMarkerDriver L_IAS (
+MarkerName= L_IAS ,
+MarkerPlacement=Trunk.SegmentsLumbar.PelvisSeg,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt =  {0.03, 0.01, -0.11};
+};
+#endif
+
+// Marker on the Shoulders
+
+#ifdef _LSHO
+// Marker on the Left Upper Thorax
+CreateMarkerDriver L_SHO (
+MarkerName= L_SHO ,
+MarkerPlacement=Trunk.SegmentsThorax.ThoraxSeg,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt = {0.10,0.47,-0.15};
+};
+#endif
+
+#ifdef _RSHO
+// Marker on the right Upper Thorax
+CreateMarkerDriver R_SHO (
+MarkerName= R_SHO ,
+MarkerPlacement=Trunk.SegmentsThorax.ThoraxSeg,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt = {0.08,0.46,0.14};
+};
+#endif
+
+
+//Marker for the Static Measurement
+
+
+#ifdef _LFLE
+// Marker on the Left Knee
+CreateMarkerDriver L_FLE ( 
+MarkerName= L_FLE,
+MarkerPlacement=Left.Leg.Seg.Thigh,
+PlaceMarkerAt = EpicondylusFemorisLateralis,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt = {0.0, 0.0, 0.0};
+};
+#endif
+
+#ifdef _LFME
+// Marker on the Left Knee
+CreateMarkerDriver L_FME ( 
+MarkerName= L_FME,
+MarkerPlacement=Left.Leg.Seg.Thigh,
+PlaceMarkerAt = EpicondylusFemorisMedialis,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+UseC3DWeightResiduals=OFF
+) = {
+  sRelOpt = {0.0, 0.0, 0.0};
+};
+#endif
+
+#ifdef _LFAL
+// Marker on the Left Ankle
+CreateMarkerDriver L_FAL (
+MarkerName= L_FAL,
+MarkerPlacement=Left.Leg.Seg.Shank,
+PlaceMarkerAt = LateralMalleolus,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt = {0.0, 0.0, 0.0};
+};
+#endif
+
+#ifdef _LTAM
+// Marker on the Left Ankle
+CreateMarkerDriver L_TAM (
+MarkerName= L_TAM,
+MarkerPlacement=Left.Leg.Seg.Shank,
+PlaceMarkerAt = MedialMalleolus,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt = {-0.02, -0.0, -0.0};
+};
+#endif
+
+#ifdef _RFLE
+// Marker on the Right Knee
+CreateMarkerDriver R_FLE (
+MarkerName= R_FLE,
+MarkerPlacement= Right.Leg.Seg.Thigh,
+PlaceMarkerAt = EpicondylusFemorisLateralis,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=1.0,WeightY=1.0,WeightZ=1.0,
+UseC3DWeightResiduals=ON
+
+) = {
+  sRelOpt = {0.0, 0.0, 0.0};
+};
+#endif
+
+#ifdef _RFME
+// Marker on the Right Knee
+CreateMarkerDriver R_FME (
+MarkerName= R_FME,
+MarkerPlacement= Right.Leg.Seg.Thigh,
+PlaceMarkerAt = EpicondylusFemorisMedialis,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=1.0,WeightY=1.0,WeightZ=1.0,
+UseC3DWeightResiduals=ON
+
+) = {
+  sRelOpt = {0.0, 0.0, 0.0};
+};
+#endif
+
+#ifdef _RFAL
+// Marker on the Right Lateral Ankle
+CreateMarkerDriver R_FAL ( 
+MarkerName= R_FAL ,
+MarkerPlacement=Right.Leg.Seg.Shank,
+PlaceMarkerAt = LateralMalleolus,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt = {0.0, 0.0, 0.0};
+};
+#endif
+
+#ifdef _RTAM
+// Marker on the Right medial Ankle
+CreateMarkerDriver R_TAM ( 
+MarkerName= R_TAM ,
+MarkerPlacement=Right.Leg.Seg.Shank,
+PlaceMarkerAt = MedialMalleolus,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt = {0.0, 0.0, 0.0};
+};
+#endif
+
+
+// Lower Extremity Markers on the legs (left+rirght)
+
+#ifdef _LFCC
+// Marker on the Left exo Heel
+CreateMarkerDriver L_FCC (
+MarkerName= L_FCC ,
+MarkerPlacement= Left.Leg.Seg.Foot,
+PlaceMarkerAt = HeelNode,
+WeightX=2.5, WeightY=1.5, WeightZ=1.5,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt =  {0, -0.01, 0.0};
+};
+#endif
+
+#ifdef _LSK1
+// Marker on the Left Tibia
+CreateMarkerDriver L_SK1 (
+MarkerName= L_SK1,
+MarkerPlacement=Left.Leg.Seg.Shank,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt = {-0.068, -0.043, 0.038};
+};
+#endif
+
+#ifdef _LSK2
+// Marker on the Left Tibia
+CreateMarkerDriver L_SK2 (
+MarkerName= L_SK2,
+MarkerPlacement=Left.Leg.Seg.Shank,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt = {-0.073, -0.102, 0.006};
+};
+#endif
+
+#ifdef _LSK3
+// Marker on the Left Tibia
+CreateMarkerDriver L_SK3 (
+MarkerName= L_SK3,
+MarkerPlacement=Left.Leg.Seg.Shank,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt = {-0.079, -0.051, -0.022};
+};
+#endif
+
+
+#ifdef _LFM1
+// Marker on the Left Toe
+CreateMarkerDriver L_FM1 (
+MarkerName= L_FM1, 
+MarkerPlacement=Left.Leg.Seg.Foot,
+PlaceMarkerAt = MetatarsalJoint1Node,
+OptX=OFF,OptY=OFF ,OptZ=OFF,
+WeightX=0.5, WeightY=0.2, WeightZ=0.5,
+UseC3DWeightResiduals=OFF
+) = {
+  sRelOpt = {0.0, 0.02, 0.00};
+};
+#endif
+
+#ifdef _LFM2
+// Marker on the Left Toe
+CreateMarkerDriver L_FM2 (
+MarkerName= L_FM2, 
+MarkerPlacement=Left.Leg.Seg.Foot,
+PlaceMarkerAt = MetatarsalJoint2Node,
+OptX=OFF,OptY=OFF ,OptZ=OFF,
+WeightX=0.5, WeightY=0.2, WeightZ=0.5,
+UseC3DWeightResiduals=OFF
+) = {
+  sRelOpt = {0.0, 0.02, 0.00};
+};
+#endif
+
+
+#ifdef _RSK1
+// Marker on the Right Tibia
+CreateMarkerDriver R_SK1 (
+MarkerName= R_SK1, 
+MarkerPlacement=Right.Leg.Seg.Shank,
+OptX=OFF,OptY=OFF,OptZ=OFF
+) = {
+  sRelOpt = {-0.048, -0.079, -0.051};
+};
+#endif
+
+#ifdef _RSK2
+// Marker on the Right Tibia
+CreateMarkerDriver R_SK2 (
+MarkerName= R_SK2, 
+MarkerPlacement=Right.Leg.Seg.Shank,
+OptX=OFF,OptY=OFF,OptZ=OFF
+) = {
+  sRelOpt = {-0.048, -0.142, -0.019};
+};
+#endif
+
+#ifdef _RSK3
+// Marker on the Right Tibia
+CreateMarkerDriver R_SK3 (
+MarkerName= R_SK3, 
+MarkerPlacement=Right.Leg.Seg.Shank,
+OptX=OFF,OptY=OFF,OptZ=OFF
+) = {
+  sRelOpt = {-0.082, -0.076, 0.002};
+};
+#endif
+
+
+#ifdef _RFM1
+// Marker on the Right Toe
+CreateMarkerDriver R_FM1 (
+MarkerName= R_FM1,  
+MarkerPlacement=Right.Leg.Seg.Foot,
+PlaceMarkerAt = MetatarsalJoint1Node,
+OptX=OFF , OptY=OFF , OptZ=OFF,
+WeightX=0.5, WeightY=0.2, WeightZ=0.5,
+UseC3DWeightResiduals=ON
+) = {
+  sRelOpt = {0.0, 0.02, 0.0};
+};
+#endif
+
+#ifdef _RFCC
+// Marker on the Right Heel
+CreateMarkerDriver R_FCC (
+MarkerName= R_FCC ,
+MarkerPlacement=Right.Leg.Seg.Foot,
+PlaceMarkerAt = HeelNode,
+OptX=OFF, OptY=OFF , OptZ=OFF,
+WeightX=1.5, WeightY=2.5, WeightZ=1.5,
+UseC3DWeightResiduals=OFF
+) = {
+  sRelOpt =  {-0.01, 0.0, 0.0};
+};
+#endif
+
+
+// Marker on the Right Metatarsel 2
+#ifdef _RFM2
+CreateMarkerDriver R_FM2 (
+MarkerName= R_FM2,  
+MarkerPlacement=Right.Leg.Seg.Foot, 
+PlaceMarkerAt = MetatarsalJoint2Node,
+OptX=OFF,OptY=OFF,OptZ=OFF,  
+WeightX=0.5, WeightY=0.2, WeightZ=0.5,
+UseC3DWeightResiduals=OFF
+) = {
+  sRelOpt =  {0.0, 0.02, 0.0};
+};
+#endif
+
+
+//Marker on the Left Exoskeleton
+
+#ifdef _ELTH1
+// Marker on the Left Exo Thigh Segment
+CreateMarkerDriver EL_TH1 ( 
+MarkerName= EL_TH1 ,
+MarkerPlacement= Main.ExoV2.Left.Thigh_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.054, 0.318, 0.171}; 
+};
+#endif
+
+#ifdef _ELTH2
+// Marker on the Left Exo Thigh Segment
+CreateMarkerDriver EL_TH2 ( 
+MarkerName= EL_TH2 ,
+MarkerPlacement= Main.ExoV2.Left.Thigh_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.120, 0.288, 0.169}; 
+};
+#endif
+
+#ifdef _ELTH3
+// Marker on the Left Exo Thigh Segment
+CreateMarkerDriver EL_TH3 ( 
+MarkerName= EL_TH3 ,
+MarkerPlacement= Main.ExoV2.Left.Thigh_Segment___1,
+PlaceMarkerAt = Origin, 
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.115, 0.202, 0.183}; 
+};
+#endif
+
+#ifdef _ELTH4
+// Marker on the Left Exo Thigh Segment
+CreateMarkerDriver EL_TH4 ( 
+MarkerName= EL_TH4 ,
+MarkerPlacement= Main.ExoV2.Left.Thigh_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.051, 0.250, 0.186}; 
+};
+#endif
+
+#ifdef _ELOSS1
+// Marker on the Left Exo Thigh Rail
+CreateMarkerDriver EL_OSS1 ( 
+MarkerName= EL_OSS1 ,
+MarkerPlacement= Main.ExoV2.Left.Thigh_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {0.005, 0.270, 0.02}; 
+};
+#endif
+
+#ifdef _ELOSS2
+// Marker on the Left Exo Thigh Rail
+CreateMarkerDriver EL_OSS2 ( 
+MarkerName= EL_OSS2 ,
+MarkerPlacement= Main.ExoV2.Left.Thigh_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {0.005, 0.130, 0.02}; 
+};
+#endif
+
+#ifdef _ELFAL
+// Marker on the Left Exo Ankle Joint
+CreateMarkerDriver EL_FAL ( 
+MarkerName= EL_FAL ,
+MarkerPlacement= Main.ExoV2.Left.Shank_Lower_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=2.0, WeightY=2.0, WeightZ=2.0,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {0.105, -0.462, -0.020}; 
+};
+#endif
+
+#ifdef _ELFLE
+// Marker on the Left Exo Knee Joint
+CreateMarkerDriver EL_FLE ( 
+MarkerName= EL_FLE ,
+MarkerPlacement= Main.ExoV2.Left.Thigh_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=2.0, WeightY=2.0, WeightZ=2.0,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {0.014, 0, 0.0}; 
+};
+#endif
+
+
+#ifdef _ELSK1
+// Marker on the left Exo Shank Segment
+CreateMarkerDriver EL_SK1 (
+MarkerName= EL_SK1, 
+MarkerPlacement= Main.ExoV2.Left.Shank_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.31, 0.30, -0.265};
+};
+#endif
+
+#ifdef _ELSK2
+// Marker on the left Exo Shank Segment
+CreateMarkerDriver EL_SK2 (
+MarkerName= EL_SK2, 
+MarkerPlacement= Main.ExoV2.Left.Shank_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.267, 0.321, -0.2315};
+};
+#endif
+
+#ifdef _ELSK3
+// Marker on the left Exo Shank Segment
+CreateMarkerDriver EL_SK3 (
+MarkerName= EL_SK3, 
+MarkerPlacement= Main.ExoV2.Left.Shank_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.27, 0.321, -0.325};
+};
+#endif
+
+#ifdef _ELUSS1
+// Marker on the left Exo Shank Rail
+CreateMarkerDriver EL_USS1 (
+MarkerName= EL_USS1, 
+MarkerPlacement= Main.ExoV2.Left.Shank_Upper_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.055, -0.013, -0.0025};
+};
+#endif
+
+#ifdef _ELUSS2
+// Marker on the left Exo Shank Rail
+CreateMarkerDriver EL_USS2 (
+MarkerName= EL_USS2, 
+MarkerPlacement= Main.ExoV2.Left.Shank_Upper_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.253, -0.013, -0.0025};
+};
+#endif
+
+#ifdef _ELFS1
+// Marker on the left Exo foot rail
+CreateMarkerDriver EL_FS1 (
+MarkerName= EL_FS1, 
+MarkerPlacement= Main.ExoV2.Left.Foot_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=2.0, WeightY=1, WeightZ=1,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {0.0, -0.058,-0.005};
+};
+#endif
+
+#ifdef _ELFSS1
+// Marker on the left Exo foot segment
+CreateMarkerDriver EL_FSS1 (
+MarkerName= EL_FSS1, 
+MarkerPlacement= Main.ExoV2.Left.Foot_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=0.2, WeightY=0.2, WeightZ=0.2,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.006, 0.095, 0.060};
+};
+#endif
+
+#ifdef _ELFSS2
+// Marker on the left Exo foot segment
+CreateMarkerDriver EL_FSS2 (
+MarkerName= EL_FSS2, 
+MarkerPlacement= Main.ExoV2.Left.Foot_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=0.2, WeightY=0.2, WeightZ=0.2,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.04, 0.11, 0.055};
+};
+#endif
+
+#ifdef _ELFSS3
+// Marker on the left Exo foot segment
+CreateMarkerDriver EL_FSS3 (
+MarkerName= EL_FSS3, 
+MarkerPlacement= Main.ExoV2.Left.Foot_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=0.2, WeightY=0.2, WeightZ=0.2,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {0.025, 0.110, 0.053};
+};
+#endif
+
+#ifdef _ELFM5
+// Marker on the Right Metatarsel 5
+CreateMarkerDriver EL_FM5 (
+MarkerName= EL_FM5,
+MarkerPlacement=Left.Leg.Seg.Foot,
+PlaceMarkerAt = MetatarsalJoint5Node,
+//MarkerPlacement=Main.ExoV2.Left.Foot_Segment___1, 
+//PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=0.5, WeightY=0.5, WeightZ=0.5,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt =  {0.0, 0.02, 0.0};
+//  sRelOpt =  {-0.04, 0.140, 0.050};
+};
+#endif
+
+
+//Marker on the Right Exoskeleton
+
+#ifdef _ERTH1
+// Marker on the Right Exo Thigh Segment
+CreateMarkerDriver ER_TH1 ( 
+MarkerName= ER_TH1 ,
+MarkerPlacement= Main.ExoV2.Right.Thigh_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.472, 0.410, 0.200}; 
+};
+#endif
+
+#ifdef _ERTH2
+// Marker on the Right Exo Thigh Segment
+CreateMarkerDriver ER_TH2 ( 
+MarkerName= ER_TH2 ,
+MarkerPlacement= Main.ExoV2.Right.Thigh_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.511, 0.424, 0.119}; 
+};
+#endif
+
+#ifdef _ERTH3
+// Marker on the Right Exo Thigh Segment
+CreateMarkerDriver ER_TH3 ( 
+MarkerName= ER_TH3 ,
+MarkerPlacement= Main.ExoV2.Right.Thigh_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.465, 0.424, 0.089}; 
+};
+#endif
+
+#ifdef _ERTH4
+// Marker on the Right Exo Thigh Segment
+CreateMarkerDriver ER_TH4 ( 
+MarkerName= ER_TH4 ,
+MarkerPlacement= Main.ExoV2.Right.Thigh_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.441, 0.424, 0.125}; 
+};
+#endif
+
+#ifdef _EROSS1
+// Marker on the Right Exo Thigh Rail
+CreateMarkerDriver ER_OSS1 ( 
+MarkerName= ER_OSS1 ,
+MarkerPlacement= Main.ExoV2.Right.Thigh_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.387, 0.261, 0.146}; 
+};
+#endif
+
+#ifdef _EROSS2
+// Marker on the Right Exo Thigh Rail
+CreateMarkerDriver ER_OSS2 ( 
+MarkerName= ER_OSS2 ,
+MarkerPlacement= Main.ExoV2.Right.Thigh_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.387, 0.261, 0.029}; 
+};
+#endif
+
+#ifdef _ERFAL
+// Marker on the Right Exo Ankle Joint
+CreateMarkerDriver ER_FAL ( 
+MarkerName= ER_FAL ,
+MarkerPlacement= Main.ExoV2.Right.Shank_Lower_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=2.0, WeightY=2.0, WeightZ=2.0,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {0.019, -0.462,- 0.020}; 
+};
+#endif
+
+#ifdef _ERFLE
+// Marker on the Right Exo Knee Joint
+CreateMarkerDriver ER_FLE ( 
+MarkerName= ER_FLE ,
+MarkerPlacement= Main.ExoV2.Right.Thigh_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=2.0, WeightY=2.0, WeightZ=2.0,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.378, 0.241, -0.110}; 
+};
+#endif
+
+
+#ifdef _ERSK1
+// Marker on the Right Exo Shank Segment
+CreateMarkerDriver ER_SK1 (
+MarkerName= ER_SK1, 
+MarkerPlacement= Main.ExoV2.Right.Shank_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.407, 0.320, -0.250};
+};
+#endif
+
+#ifdef _ERSK2
+// Marker on the Right Exo Shank Segment
+CreateMarkerDriver ER_SK2 (
+MarkerName= ER_SK2, 
+MarkerPlacement= Main.ExoV2.Right.Shank_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.378, 0.295, -0.20};
+};
+#endif
+
+#ifdef _ERSK3
+// Marker on the Right Exo Shank Segment
+
+CreateMarkerDriver ER_SK3 (
+MarkerName= ER_SK3, 
+MarkerPlacement= Main.ExoV2.Right.Shank_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.38, 0.300, -0.314};
+};
+#endif
+
+#ifdef _ERUSS1
+// Marker on the Right Exo Shank Rail
+CreateMarkerDriver ER_USS1 (
+MarkerName= ER_USS1, 
+MarkerPlacement= Main.ExoV2.Right.Shank_Upper_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.056, 0.250, -0.0025};
+};
+#endif
+
+#ifdef _ERUSS2
+// Marker on the Right Exo Shank Rail
+CreateMarkerDriver ER_USS2 (
+MarkerName= ER_USS2, 
+MarkerPlacement= Main.ExoV2.Right.Shank_Upper_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.254, 0.250,-0.0025};
+};
+#endif
+
+#ifdef _ERFS1
+// Marker on the Right Exo foot rail
+CreateMarkerDriver ER_FS1 (
+MarkerName= ER_FS1, 
+MarkerPlacement= Main.ExoV2.Right.Foot_Rail___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {0.0, -0.052, 0.020};
+};
+#endif
+
+#ifdef _ERFSS1
+// Marker on the Right Exo foot segment
+CreateMarkerDriver ER_FSS1 (
+MarkerName= ER_FSS1, 
+MarkerPlacement= Main.ExoV2.Right.Foot_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=0.2, WeightY=0.2, WeightZ=0.2,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.19, 0.11, 0.055};
+};
+#endif
+
+#ifdef _ERFSS2
+// Marker on the Right Exo foot segment
+CreateMarkerDriver ER_FSS2 (
+MarkerName= ER_FSS2, 
+MarkerPlacement= Main.ExoV2.Right.Foot_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=0.2, WeightY=0.2, WeightZ=0.2,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.159, 0.098, 0.050};
+};
+#endif
+
+#ifdef _ERFSS3
+// Marker on the Right Exo foot segment
+CreateMarkerDriver ER_FSS3 (
+MarkerName= ER_FSS3, 
+MarkerPlacement= Main.ExoV2.Right.Foot_Segment___1,
+PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,
+WeightX=0.2, WeightY=0.2, WeightZ=0.2,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt = {-0.227, 0.112, 0.050};
+};
+#endif
+
+
+// Marker on the Right Metatarsel 5
+#ifdef _ERFM5
+CreateMarkerDriver ER_FM5 (
+MarkerName= ER_FM5, 
+MarkerPlacement=Right.Leg.Seg.Foot,
+PlaceMarkerAt = MetatarsalJoint5Node,
+//MarkerPlacement= Main.ExoV2.Right.Foot_Segment___1, 
+//PlaceMarkerAt = Origin,
+OptX=OFF,OptY=OFF,OptZ=OFF,  
+WeightX=0.5, WeightY=0.5, WeightZ=0.5,
+ScaleMarkerPosOnOff = 0
+) = {
+  sRelOpt =  {0.0, 0.02, 0.0};
+//  sRelOpt =  {-0.159, 0.148, 0.045};
+};
+#endif
+
+

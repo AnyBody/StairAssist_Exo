@@ -1,0 +1,191 @@
+AnyFolder Resultant = {
+  
+  AnyFolder Thigh = {
+       
+    // Thigh Resultant
+    AnyForceMomentMeasure2 ThighResultantForceMoments = {
+      AnyRefFrame &HumRef = ...Human.Thigh.ExoRefNode.ThighAxis.CenNode;
+      IncludeForces =  arrcat(ObjSearch("...ThighReaction"),ObjSearch("...ThighJnt.Reaction"));
+
+      AnySeg &Thigh = ...Human.Thigh;
+      
+      AnyVec3 FLocal = F * HumRef.Axes;
+      AnyVec3 MLocal = M * HumRef.Axes;
+      AnyFloat FLocalRes = vnorm(FLocal);
+      AnyFloat FLocalResXY = sqrt(FLocal[0]^2 + FLocal[1]^2);
+      
+      AnyDrawLine ResForce_Line = {
+        AnyRefFrame &ref = .HumRef;
+        p0 = {0, 0, 0};
+        p1 = 0.001*{.FLocal[0], .FLocal[1], .FLocal[2]};
+        Line.Thickness = 0.01;
+        GlobalCoord=Off;
+        Line.RGB = {1, 0, 0}; 
+      };
+    }; // Thigh Resultant    
+    
+    AnyFunConst one = {
+      Value = {1.0};
+    };
+
+    // Interface Force Elements
+    // Generate fake data for KJ and KJDS models so that the code for exporting output does not break.
+    // KJ and KJDS models do not use contact elements (or recruited actuators). Thus, fake values are
+    // generated that can be easily spotted as negative values for strength or Max Activity is senseless.
+    AnyFolder InterfaceForceElements = {
+      AnyFloat Strength_Thigh = -1;
+      AnyFloat MaxActivityThigh = -0.01*.one(.ThighResultantForceMoments.t);  // checks 600 muscles for Thigh interface: Count is Ok.
+    };
+    
+    AnyForceMomentMeasure2 ExoAssistanceResultant = {
+      AnyRefFrame &HumThigh = ...Human.Thigh.ExoRefNode.ThighAxis.CenNode;
+      AnySeg &ExoThigh = ...Exo.Thigh_Segment___1;
+      AnyForceBase &ExoAssistance = ...ExoForce;
+      AnyVec3 FLocal = F * HumThigh.Axes;
+      AnyVec3 MLocal = M * HumThigh.Axes;
+    };
+    
+    AnyFolder ResultantMinusExoAssistance = {
+      AnyVec3 FLocal = .ThighResultantForceMoments.FLocal - .ExoAssistanceResultant.FLocal;
+      AnyVec3 MLocal = .ThighResultantForceMoments.MLocal - .ExoAssistanceResultant.MLocal;
+    };
+    
+  }; // Thigh
+    
+  AnyFolder Shank = {
+       
+    // Shank Resultant
+    AnyForceMomentMeasure2 ShankResultantForceMoments = {
+      AnyRefFrame &HumRef = ...Human.Shank.ExoRefNode.ShankAxis.CenNode;
+      IncludeForces =  arrcat(ObjSearch("...ShankReaction"),ObjSearch("...ShankJnt.Reaction"));
+
+      AnySeg &Shank = ...Human.Shank;
+      
+      AnyVec3 FLocal = F * HumRef.Axes;
+      AnyVec3 MLocal = M * HumRef.Axes;
+      AnyFloat FLocalRes = vnorm(FLocal);
+      AnyFloat FLocalResXY = sqrt(FLocal[0]^2 + FLocal[1]^2);
+      
+      AnyDrawLine ResForce_Line = {
+        AnyRefFrame &ref = .HumRef;
+        p0 = {0, 0, 0};
+        p1 = 0.001*{.FLocal[0], .FLocal[1], .FLocal[2]};
+        Line.Thickness = 0.01;
+        GlobalCoord=Off;
+        Line.RGB = {1, 0, 0}; 
+      };
+    }; // Shank Resultant
+    
+    AnyFunConst one = {
+      Value = {1.0};
+    };
+
+    // Interface Force Elements
+    // Generate fake data for KJ and KJDS models so that the code for exporting output does not break.
+    // KJ and KJDS models do not use contact elements (or recruited actuators). Thus, fake values are
+    // generated that can be easily spotted as negative values for strength or Max Activity is senseless.
+    AnyFolder InterfaceForceElements = {
+      AnyFloat Strength_Shank = -1;
+      AnyFloat MaxActivityShank = -0.01*.one(.ShankResultantForceMoments.t);  
+    };
+        
+    AnyForceMomentMeasure2 ExoAssistanceResultant = {
+      AnyRefFrame &HumShank = ...Human.Shank.ExoRefNode.ShankAxis.CenNode;
+      AnySeg &ExoShank = ...Exo.Shank_Segment___1;
+      AnyForceBase &ExoAssistance = ...ExoForce;
+      AnyVec3 FLocal = F * HumShank.Axes;
+      AnyVec3 MLocal = M * HumShank.Axes;
+    };
+    
+    AnyFolder ResultantMinusExoAssistance = {
+      AnyVec3 FLocal = .ShankResultantForceMoments.FLocal - .ExoAssistanceResultant.FLocal;
+      AnyVec3 MLocal = .ShankResultantForceMoments.MLocal - .ExoAssistanceResultant.MLocal;
+    };
+    
+  }; // Shank  
+  
+  AnyFolder Foot = {
+    
+    // Foot Resultant on Foot.ExoRefNode.GroundJointRotated (node used in Kin Joint)
+    AnyForceMomentMeasure2 FootResultantForceMoments = {
+      AnyRefFrame &HumRef = ...Human.Foot.ExoRefNode.GroundJointRotated;
+      IncludeForces = arrcat(ObjSearch("...FootReaction"),ObjSearch("...FootJnt.Reaction"));
+      
+      AnySeg &Foot = ...Human.Foot;
+      
+      AnyVec3 FLocal = F * HumRef.Axes;
+      AnyVec3 MLocal = M * HumRef.Axes;
+      AnyFloat FLocalRes = vnorm(FLocal);
+      AnyFloat FLocalResXY = sqrt(FLocal[0]^2 + FLocal[1]^2);
+      
+      AnyDrawLine ResForce_Line = {
+        AnyRefFrame &ref = .HumRef;
+        p0 = {0, 0, 0};
+        p1 = 0.001*{.FLocal[0], .FLocal[1], .FLocal[2]};
+        Line.Thickness = 0.01;
+        GlobalCoord=Off;
+        Line.RGB = {1, 0, 0}; 
+      };
+    }; // Foot Resultant
+    
+    // Foot Base - Resultant on Foot.GroundJoint.GroundJointRotated (Actual Foot Base)
+    AnyForceMomentMeasure2 FootBaseResultantForceMoments = {
+      AnyRefFrame &HumRef = ...Human.Foot.GroundJoint.GroundJointRotated;
+      IncludeForces = arrcat(ObjSearch("...FootReaction"),ObjSearch("...FootJnt.Reaction"));
+      
+      AnySeg &Foot = ...Human.Foot;
+      
+      AnyVec3 FLocal = F * HumRef.Axes;
+      AnyVec3 MLocal = M * HumRef.Axes;
+      AnyFloat FLocalRes = vnorm(FLocal);
+      AnyFloat FLocalResXY = sqrt(FLocal[0]^2 + FLocal[1]^2);
+      
+      AnyDrawLine ResForce_Line = {
+        AnyRefFrame &ref = .HumRef;
+        p0 = {0, 0, 0};
+        p1 = 0.0001*{.FLocal[0], .FLocal[1], .FLocal[2]};
+        Line.Thickness = 0.01;
+        GlobalCoord=Off;
+        Line.RGB = {0.7, 0, 0}; 
+      };
+    }; // Foot Base Resultant
+    
+    // Foot Strap - Resultant on Foot.ExtensorDigitorumSplitPoint1Node (Node around strap)
+    AnyForceMomentMeasure2 FootStrapResultantForceMoments = {
+      AnyRefFrame &HumRef = ...Human.Foot.ExtensorDigitorumSplitPoint1Node;
+      IncludeForces = arrcat(ObjSearch("...FootReaction"),ObjSearch("...FootJnt.Reaction"));
+      
+      AnySeg &Foot = ...Human.Foot;
+      
+      AnyVec3 FLocal = F * HumRef.Axes;
+      AnyVec3 MLocal = M * HumRef.Axes;
+      AnyFloat FLocalRes = vnorm(FLocal);
+      AnyFloat FLocalResXY = sqrt(FLocal[0]^2 + FLocal[1]^2);
+      
+      AnyDrawLine ResForce_Line = {
+        AnyRefFrame &ref = .HumRef;
+        p0 = {0, 0, 0};
+        p1 = 0.0001*{.FLocal[0], .FLocal[1], .FLocal[2]};
+        Line.Thickness = 0.01;
+        GlobalCoord=Off;
+        Line.RGB = {0.7, 0, 0}; 
+      };
+    }; // Foot Strap Resultant
+    
+    AnyFunConst one = {
+      Value = {1.0};
+    };
+    
+    // Generate fake data for KJ and KJDS models so that the code for exporting output does not break.
+    // KJ and KJDS models do not use contact elements (or recruited actuators). Thus, fake values are
+    // generated that can be easily spotted as negative values for strength or Max Activity is senseless.
+    AnyFolder InterfaceForceElements = {
+      AnyFloat Strength_FootBase = -1;
+      AnyFloat Strength_FootStrap = -1;
+      AnyFloat MaxActivityFootBase = -0.01*.one(.FootResultantForceMoments.t);
+      AnyFloat MaxActivityFootStrap = -0.01*.one(.FootResultantForceMoments.t);
+    };
+    
+  }; // Foot
+  
+}; // Resultant

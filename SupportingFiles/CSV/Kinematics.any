@@ -1,0 +1,186 @@
+// These are selected results that are to be exported. They have final values only. Do Not add classes here
+
+ 
+AnyFolder _Human = {
+  
+  // JOINT ANGLES
+  AnyFolder _JointAngles_ = {      
+    AnyFloat PelvisThoraxFlexion_deg = -Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyVar_PelvisThoraxExtension;
+    AnyFloat PelvisThoraxLateralBending_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyVar_PelvisThoraxLateralBending;
+    AnyFloat PelvisThoraxRotation_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyVar_PelvisThoraxRotation;
+    
+    AnyFloat L_HipFlexion_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyFolder_Left.AnyVar_HipFlexion;
+    AnyFloat L_HipAbduction_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyFolder_Left.AnyVar_HipAbduction; 
+    AnyFloat L_HipExternalRotation_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyFolder_Left.AnyVar_HipExternalRotation;
+    AnyFloat L_KneeFlexion_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyFolder_Left.AnyVar_KneeFlexion;
+    AnyFloat L_AnklePlantarFlexion_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyFolder_Left.AnyVar_AnklePlantarFlexion;
+    AnyFloat L_SubTalarEversion_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyFolder_Left.AnyVar_SubTalarEversion;
+    
+    AnyFloat R_HipFlexion_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyFolder_Right.AnyVar_HipFlexion;
+    AnyFloat R_HipAbduction_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyFolder_Right.AnyVar_HipAbduction; 
+    AnyFloat R_HipExternalRotation_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyFolder_Right.AnyVar_HipExternalRotation;
+    AnyFloat R_KneeFlexion_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyFolder_Right.AnyVar_KneeFlexion;
+    AnyFloat R_AnklePlantarFlexion_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyFolder_Right.AnyVar_AnklePlantarFlexion;
+    AnyFloat R_SubTalarEversion_deg = Main.Studies.InverseDynamicStudy.BodyModel.Trunk.MannequinValuesFolder.AnyFolder_Right.AnyVar_SubTalarEversion;
+  }; // Joint Angles
+  
+  // VELOCITIES
+  AnyFolder _Velocities_ = {
+    AnyFloat L_HipFlexion_W_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Interface.Left.HipFlexion.Vel*180/pi;
+    AnyFloat L_HipAbduction_W_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Interface.Left.HipAbduction.Vel*180/pi;
+    AnyFloat L_HipExternalRotation_W_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Interface.Left.HipExternalRotation.Vel*180/pi;
+    AnyFloat L_KneeFlexion_W_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Interface.Left.KneeFlexion.Vel*180/pi;
+    AnyFloat L_AnklePlantarFlexion_W_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Interface.Left.AnklePlantarFlexion.Vel*180/pi;
+    AnyFloat L_SubTalarEversion_W_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Interface.Left.SubTalarEversion.Vel*180/pi;
+    AnyFloat L_Foot_VGlobal_X_cmPs = -100*Main.Studies.InverseDynamicStudy.BodyModel.Left.Leg.Seg.Foot.rDot[0];
+    AnyFloat L_FootHeel_VGlobal_X_cmPs = -100*Main.Studies.InverseDynamicStudy.BodyModel.Left.Leg.Seg.Foot.HeelContactNode.rDot[0];
+    AnyFloat L_FootCentre_VGlobal_X_cmPs = -100*Main.Studies.InverseDynamicStudy.BodyModel.Left.Leg.Seg.Foot.GroundJoint.rDot[0];
+    AnyFloat L_FootToe_VGlobal_X_cmPs = -100*Main.Studies.InverseDynamicStudy.BodyModel.Left.Leg.Seg.Foot.BigToeNode.rDot[0];
+    AnyFloat L_Foot_WGlobal_Y_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Left.Leg.Seg.Foot.omega[1]*180/pi;
+
+    AnyFloat R_HipFlexion_W_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Interface.Right.HipFlexion.Vel*180/pi;
+    AnyFloat R_HipAbduction_W_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Interface.Right.HipAbduction.Vel*180/pi;
+    AnyFloat R_HipExternalRotation_W_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Interface.Right.HipExternalRotation.Vel*180/pi;
+    AnyFloat R_KneeFlexion_W_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Interface.Right.KneeFlexion.Vel*180/pi;
+    AnyFloat R_AnklePlantarFlexion_W_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Interface.Right.AnklePlantarFlexion.Vel*180/pi;
+    AnyFloat R_SubTalarEversion_W_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Interface.Right.SubTalarEversion.Vel*180/pi;    
+    AnyFloat R_Foot_VGlobal_X_cmPs = -100*Main.Studies.InverseDynamicStudy.BodyModel.Right.Leg.Seg.Foot.rDot[0];
+    AnyFloat R_FootHeel_VGlobal_X_cmPs = -100*Main.Studies.InverseDynamicStudy.BodyModel.Right.Leg.Seg.Foot.HeelContactNode.rDot[0];
+    AnyFloat R_FootCentre_VGlobal_X_cmPs = -100*Main.Studies.InverseDynamicStudy.BodyModel.Right.Leg.Seg.Foot.GroundJoint.rDot[0];
+    AnyFloat R_FootToe_VGlobal_X_cmPs = -100*Main.Studies.InverseDynamicStudy.BodyModel.Right.Leg.Seg.Foot.BigToeNode.rDot[0];
+    AnyFloat R_Foot_WGlobal_Y_degPs = Main.Studies.InverseDynamicStudy.BodyModel.Right.Leg.Seg.Foot.omega[1]*180/pi;
+  }; // Velocities 
+  
+}; // Human
+
+AnyFolder _Exoskeleton_ = {
+  AnyFloat L_AnkleAngle_deg = Main.ExoV2.Left.Mates.Ankle_Joint.Pos*180/pi;
+  AnyFloat L_AnkleVel_W_degPs = Main.ExoV2.Left.Mates.Ankle_Joint.Vel*180/pi;
+  AnyFloat L_KneeAngle_deg = Main.ExoV2.Left.Mates.Knee_Joint.Pos*180/pi;
+  AnyFloat L_KneeVel_W_degPs = Main.ExoV2.Left.Mates.Knee_Joint.Vel*180/pi;
+  
+  AnyFloat R_AnkleAngle_deg = Main.ExoV2.Right.Mates.Ankle_Joint.Pos*180/pi;
+  AnyFloat R_AnkleVel_W_degPs = Main.ExoV2.Right.Mates.Ankle_Joint.Vel*180/pi;
+  AnyFloat R_KneeAngle_deg = Main.ExoV2.Right.Mates.Knee_Joint.Pos*180/pi;
+  AnyFloat R_KneeVel_W_degPs = Main.ExoV2.Right.Mates.Knee_Joint.Vel*180/pi;  
+};
+
+AnyFolder _Markers_ = {
+  AnyFloat L_FCC_XGlobal_cm = 100*Main.HumanModel.BodyModel.Left.Leg.Seg.Foot.L_FCC.r[0];
+  AnyFloat L_FCC_YGlobal_cm = 100*Main.HumanModel.BodyModel.Left.Leg.Seg.Foot.L_FCC.r[1];
+  AnyFloat L_FCC_ZGlobal_cm = 100*Main.HumanModel.BodyModel.Left.Leg.Seg.Foot.L_FCC.r[2];
+  
+  AnyFloat R_FCC_XGlobal_cm = 100*Main.HumanModel.BodyModel.Right.Leg.Seg.Foot.R_FCC.r[0];
+  AnyFloat R_FCC_YGlobal_cm = 100*Main.HumanModel.BodyModel.Right.Leg.Seg.Foot.R_FCC.r[1];
+  AnyFloat R_FCC_ZGlobal_cm = 100*Main.HumanModel.BodyModel.Right.Leg.Seg.Foot.R_FCC.r[2];
+};
+
+// MEASURE HUMAN EXOSKELETON RELATIVE MOVEMENT
+
+AnyFolder _HumExo_ = {
+  
+  // LEFT
+  
+  AnyFolder LThigh_ = {
+    AnyFloat Dis_XLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Thigh.Pos[0];
+    AnyFloat Dis_YLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Thigh.Pos[1];
+    AnyFloat Dis_ZLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Thigh.Pos[2];
+    
+    AnyFloat Rot_X_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Thigh.RotX_deg;
+    AnyFloat Rot_Y_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Thigh.RotY_deg;
+    AnyFloat Rot_Z_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Thigh.RotZ_deg;
+  }; // Thigh
+  
+  AnyFolder LKnee_ = {
+    AnyFloat Dis_XLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Knee_Sh.Pos[0];
+    AnyFloat Dis_YLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Knee_Sh.Pos[1];
+    AnyFloat Dis_ZLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Knee_Sh.Pos[2];
+    
+    AnyFloat Rot_X_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Knee_Sh.RotX_deg;
+    AnyFloat Rot_Y_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Knee_Sh.RotY_deg;
+    AnyFloat Rot_Z_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Knee_Sh.RotZ_deg;
+  }; // Knee
+  
+  AnyFolder LShank_ = {
+    AnyFloat Dis_XLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Shank.Pos[0];
+    AnyFloat Dis_YLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Shank.Pos[1];
+    AnyFloat Dis_ZLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Shank.Pos[2];
+    
+    AnyFloat Rot_X_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Shank.RotX_deg;
+    AnyFloat Rot_Y_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Shank.RotY_deg;
+    AnyFloat Rot_Z_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Shank.RotZ_deg;
+  }; // Shank
+  
+  AnyFolder LAnkle_ = {
+    AnyFloat Dis_XLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Ankle_Fo.Pos[0];
+    AnyFloat Dis_YLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Ankle_Fo.Pos[1];
+    AnyFloat Dis_ZLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Ankle_Fo.Pos[2];
+    
+    AnyFloat Rot_X_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Ankle_Fo.RotX_deg;
+    AnyFloat Rot_Y_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Ankle_Fo.RotY_deg;
+    AnyFloat Rot_Z_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Ankle_Fo.RotZ_deg;
+  }; // Ankle
+  
+  AnyFolder LFoot_ = {
+    AnyFloat Dis_XLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Foot.Pos[0];
+    AnyFloat Dis_YLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Foot.Pos[1];
+    AnyFloat Dis_ZLocal_cm = 100*Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Foot.Pos[2];
+    
+    AnyFloat Rot_X_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Foot.RotX_deg;
+    AnyFloat Rot_Y_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Foot.RotY_deg;
+    AnyFloat Rot_Z_deg = Main.ExoV2.Interface_Left.KinMeasureHumanExo.Measure_HumExo_Foot.RotZ_deg;
+  }; // Foot
+  
+  // RIGHT
+  
+  AnyFolder RThigh_ = {
+    AnyFloat Dis_XLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Thigh.Pos[0];
+    AnyFloat Dis_YLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Thigh.Pos[1];
+    AnyFloat Dis_ZLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Thigh.Pos[2];
+    
+    AnyFloat Rot_X_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Thigh.RotX_deg;
+    AnyFloat Rot_Y_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Thigh.RotY_deg;
+    AnyFloat Rot_Z_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Thigh.RotZ_deg;
+  }; // Thigh
+  
+  AnyFolder RKnee_ = {
+    AnyFloat Dis_XLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Knee_Sh.Pos[0];
+    AnyFloat Dis_YLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Knee_Sh.Pos[1];
+    AnyFloat Dis_ZLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Knee_Sh.Pos[2];
+    
+    AnyFloat Rot_X_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Knee_Sh.RotX_deg;
+    AnyFloat Rot_Y_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Knee_Sh.RotY_deg;
+    AnyFloat Rot_Z_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Knee_Sh.RotZ_deg;
+  }; // Knee
+  
+  AnyFolder RShank_ = {
+    AnyFloat Dis_XLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Shank.Pos[0];
+    AnyFloat Dis_YLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Shank.Pos[1];
+    AnyFloat Dis_ZLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Shank.Pos[2];
+    
+    AnyFloat Rot_X_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Shank.RotX_deg;
+    AnyFloat Rot_Y_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Shank.RotY_deg;
+    AnyFloat Rot_Z_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Shank.RotZ_deg;
+  }; // Shank
+  
+  AnyFolder RAnkle_ = {
+    AnyFloat Dis_XLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Ankle_Fo.Pos[0];
+    AnyFloat Dis_YLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Ankle_Fo.Pos[1];
+    AnyFloat Dis_ZLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Ankle_Fo.Pos[2];
+    
+    AnyFloat Rot_X_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Ankle_Fo.RotX_deg;
+    AnyFloat Rot_Y_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Ankle_Fo.RotY_deg;
+    AnyFloat Rot_Z_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Ankle_Fo.RotZ_deg;
+  }; // Ankle
+  
+  AnyFolder RFoot_ = {
+    AnyFloat Dis_XLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Foot.Pos[0];
+    AnyFloat Dis_YLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Foot.Pos[1];
+    AnyFloat Dis_ZLocal_cm = 100*Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Foot.Pos[2];
+    
+    AnyFloat Rot_X_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Foot.RotX_deg;
+    AnyFloat Rot_Y_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Foot.RotY_deg;
+    AnyFloat Rot_Z_deg = Main.ExoV2.Interface_Right.KinMeasureHumanExo.Measure_HumExo_Foot.RotZ_deg;
+  }; // Foot  
+  
+}; // Human Exo

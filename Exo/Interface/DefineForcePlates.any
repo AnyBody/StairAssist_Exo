@@ -1,0 +1,20 @@
+#ifdef CreateCondCont_
+#undef CreateCondCont_
+#endif
+
+#define CreateCondCont_(NodeNo) Exo_ConditionalContact ExoForcePlate##NodeNo(PLATE_BASE_FRAME = ..Settings.ExoRefSeg.ConNode##NodeNo,\
+                                  NORMAL_DIRECTION = "Z",\
+                                  NODES_FOLDER = ContactNode,\
+                                  NUMBER_OF_NODES = 1,\
+                                  SHOW_TRIGGER_VOLUME = SHOW_EXOSUB_FORCE_PLATE) =\
+                                  {\
+                                  Settings = {\
+                                    LimitDistLow = -0.06;\
+                                    LimitDistHigh = 0.06;\
+                                    ShowResultantForce = Off;\
+                                    FrictionCoefficient = 0.36;\
+                                    Strength = ...Settings.Strength;\
+                                            };\
+                                  CreateSingleContactNode ContactNode(human_ref = ...Settings.HumanRefNode.ConNode##NodeNo) = {};\
+                                 };
+

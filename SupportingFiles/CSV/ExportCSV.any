@@ -1,0 +1,112 @@
+AnyFolder Results = {
+  
+  AnyFolder Interface = {
+    #include "HumExoInterface.any"
+  }; // HumExo Interface
+  
+  AnyFolder BioMech = {
+    #include "BioMechOutputs.any"
+  }; // BioMechOutputs
+  
+  AnyFolder EnvForce = {
+    #include "EnvironmentForce.any"
+  }; // Environment or External Forces
+  
+  AnyFolder Kinematics = {
+    #include "Kinematics.any"
+  }; // Kinematics Outputs
+  
+  AnyOutputFile Result = 
+  {
+    
+    FileName = ANYBODY_PATH_OUTPUT + "CSV/" + INTERFACE_MODEL + "_" + MOCAP_NAME_MAINFILEDIR + ".csv";
+    
+    SuppressTimeColumnOnOff = Off;
+    Header.ShortenNamesOnOff = On;
+    Header.ConstSectionSaveOptionsOnOff = Off;
+    NumberFormat.Style = DecimalNumber;
+    NumberFormat.Digits = 2; // Digits after decimal
+    NumberFormat.Width = 5;   
+    
+    AnyFloat tNorm = 100*(Main.Studies.InverseDynamicStudy.t-Main.Studies.InverseDynamicStudy.tStart)/
+                         (Main.Studies.InverseDynamicStudy.tEnd-Main.Studies.InverseDynamicStudy.tStart);
+    AnyFloat nStep = Main.Studies.InverseDynamicStudy.iStep + 0*Main.Studies.InverseDynamicStudy.t;
+    
+    AnyFolder &Biomech = .BioMech;    
+    AnyFolder &EnvForce = .EnvForce;
+    AnyFolder &Kinematics = .Kinematics;    
+    AnyFolder &HumExoInterface = .Interface;
+    
+  }; // Result - OutputFile
+  
+  AnyFolder SelectedMuscleActivities = {
+    AnyFolder Left = {
+      // Left VastusLateralis
+      AnySearchFun ListVastusLateralis = {
+        Search = "Main.HumanModel.BodyModel.Left.Leg.Mus.VastusLateralis*.Activity";
+      };    
+      AnyVar EnvelopeVastusLateralis = max(ListVastusLateralis());
+      
+      // Left RectusFemoris
+      AnySearchFun ListRectusFemoris = {
+        Search = "Main.HumanModel.BodyModel.Left.Leg.Mus.RectusFemoris*.Activity";
+      };    
+      AnyVar EnvelopeRectusFemoris = max(ListRectusFemoris());
+      
+      // Left VastusMedialis
+      AnySearchFun ListVastusMedialis = {
+        Search = "Main.HumanModel.BodyModel.Left.Leg.Mus.VastusMedialis*.Activity";
+      };    
+      AnyVar EnvelopeVastusMedialis = max(ListVastusMedialis());
+      
+      // Left VastusIntermedius
+      AnySearchFun ListVastusIntermedius = {
+        Search = "Main.HumanModel.BodyModel.Left.Leg.Mus.VastusIntermedius*.Activity";
+      };    
+      AnyVar EnvelopeVastusIntermedius = max(ListVastusIntermedius());
+      
+      // Left Soleus
+      AnySearchFun ListSoleus = {
+        Search = "Main.HumanModel.BodyModel.Left.Leg.Mus.Soleus*.Activity";
+      };    
+      AnyVar EnvelopeSoleus = max(ListSoleus());
+
+    }; // Left
+    
+    AnyFolder Right = {
+      // Right VastusLateralis
+      AnySearchFun ListVastusLateralis = {
+        Search = "Main.HumanModel.BodyModel.Right.Leg.Mus.VastusLateralis*.Activity";
+      };    
+      AnyVar EnvelopeVastusLateralis = max(ListVastusLateralis());
+      
+      // Right RectusFemoris
+      AnySearchFun ListRectusFemoris = {
+        Search = "Main.HumanModel.BodyModel.Right.Leg.Mus.RectusFemoris*.Activity";
+      };    
+      AnyVar EnvelopeRectusFemoris = max(ListRectusFemoris());
+      
+      // Right VastusMedialis
+      AnySearchFun ListVastusMedialis = {
+        Search = "Main.HumanModel.BodyModel.Right.Leg.Mus.VastusMedialis*.Activity";
+      };    
+      AnyVar EnvelopeVastusMedialis = max(ListVastusMedialis());
+      
+      // Right VastusIntermedius
+      AnySearchFun ListVastusIntermedius = {
+        Search = "Main.HumanModel.BodyModel.Right.Leg.Mus.VastusIntermedius*.Activity";
+      };    
+      AnyVar EnvelopeVastusIntermedius = max(ListVastusIntermedius());
+      
+      // Right Soleus
+      AnySearchFun ListSoleus = {
+        Search = "Main.HumanModel.BodyModel.Right.Leg.Mus.Soleus*.Activity";
+      };    
+      AnyVar EnvelopeSoleus = max(ListSoleus());
+
+    }; // Right
+    
+  }; // Selected Muscle Activities
+  
+}; // Results
+

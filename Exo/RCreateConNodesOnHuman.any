@@ -1,0 +1,183 @@
+// Check #include "../Changes/ClassTemplates/CreateExoOriginOnHuman.any" for explanation
+// USE INITIAL GUESS TO HELP THE PARAMETER OPTIMIZATION STUDY CONVERGE TO A SOLUTION (default = {0,0,0,0,0,0})
+// initial guess of the ref node on human {LinX, LinY, LinZ, RotX, RotY, RotZ} (in meters or radians - type = RotAxesAngles)
+
+CreateExoOriginOnHuman RThigh (EXO_SEG = .Right.Exo.Thigh_Segment___1,
+                              HUMAN_SEG = .Right.Human.Thigh,
+                              OPT_LIN_X = ON, OPT_LIN_Y = ON, OPT_LIN_Z = ON,
+                              OPT_ROT_X = ON, OPT_ROT_Y = ON, OPT_ROT_Z = ON,
+                              NAME_PARA_OPT = RThigh) = {
+                                Initial_Guess = {-0.08379891, -0.1275812, 0.5440286, -1.493271, 0.08366594, -1.319124};
+                              };
+                              
+CreateExoOriginOnHuman RShank (EXO_SEG = .Right.Exo.Shank_Segment___1,
+                              HUMAN_SEG = .Right.Human.Shank,
+                              OPT_LIN_X = ON, OPT_LIN_Y = ON, OPT_LIN_Z = ON,
+                              OPT_ROT_X = ON, OPT_ROT_Y = ON, OPT_ROT_Z = ON,
+                              NAME_PARA_OPT = RShank) = {
+                                Initial_Guess = {-0.07842297, 0.4866388, 0.4773442, -1.629148, 0.1943801, -1.345731};
+                              };
+                                  
+CreateExoOriginOnHuman RFoot (EXO_SEG = .Right.Exo.Foot_Segment___1,
+                             HUMAN_SEG = .Right.Human.Foot,
+                             OPT_LIN_X = ON, OPT_LIN_Y = ON, OPT_LIN_Z = ON,
+                             OPT_ROT_X = ON, OPT_ROT_Y = ON, OPT_ROT_Z = ON,
+                             NAME_PARA_OPT = RFoot) = {
+                               Initial_Guess = {-0.01851064, -0.04410679, 0.2216247, -1.533287, 0.1910842, -1.337223};
+                             };
+
+AnyFolder Right = {
+  
+  AnyFolder &Human = Main.HumanModel.BodyModel.Right.Leg.Seg;
+  AnyFolder &Exo = ..Right;
+                                     
+  Human = {
+    //******************Draw Settings for Contact Nodes on Human**********************
+    AnyFolder ContactNodesDrawSettings = {
+      AnyFloat RGB = {0.0, 1.0, 1.0};
+      AnyVar Opacity = 1;
+      AnyFloat ScaleXYZ = 5*{0.003440291092, 0.003440291092, 0.003440291092};
+      AnySwitchVar Visible = Off;
+      AnySwitchVar VisibleKeyNodes = Off;
+    };
+    //***********These are then called into each segment one more time****************
+    
+    Thigh = {
+      
+      // Draw settings are needed at this level by the Exo_ContactNodes.any File.
+      AnyFolder ContactNodesDrawSettings = {
+        AnyFloat RGB = ..ContactNodesDrawSettings.RGB;
+        AnyVar Opacity = ..ContactNodesDrawSettings.Opacity;
+        AnyFloat ScaleXYZ = ..ContactNodesDrawSettings.ScaleXYZ;
+        AnySwitchVar Visible = ..ContactNodesDrawSettings.Visible;
+        AnySwitchVar VisibleKeyNodes = ..ContactNodesDrawSettings.VisibleKeyNodes;
+      };
+      
+      ExoRefNode = {
+        #include "RThigh_ConPlanes.any"
+        #include "RThigh_ConNodes.any"
+        AnyRefNode ThighAxis =
+        {
+          sRel={-0.519637976, 0.2408608539, 0.06199724608};
+          ARel={ {0, -1, 0}, {1, 0, 5.84308044e-15}, {-5.84308044e-15, 0, 1} };
+          AnyDrawRefFrame drw_node =
+          {
+            RGB = {0.7921568627, 0.8196078431, 0.9333333333};
+            Opacity = 1;
+            ScaleXYZ = {0, 0, 0.1710058132};
+            Visible = Off;
+          };
+          AnyRefNode CenNode = {
+            sRel = {0, 0, 0.175/2};     
+            //ARel = RotMat(pi,x);
+            AnyDrawRefFrame drw ={Visible = ....ContactNodesDrawSettings.VisibleKeyNodes; RGB={0,0.8,0.8}; ScaleXYZ={0.4,0.4,0.4};};
+          }; // Cen Node
+        }; // Thigh Axis
+      }; // Exo Ref Node
+      
+      KneeJoint = {
+        AnyRefNode KneeNodeRotated = {
+          ARel = RotMat(-pi/2,x); 
+          AnyDrawRefFrame drw = {Visible = ...ContactNodesDrawSettings.VisibleKeyNodes; RGB={0,0.8,0.8}; ScaleXYZ={0.4,0.4,0.4};};
+        };
+      };
+    }; // Thigh
+    
+    Shank = {
+      
+      // Draw settings are needed at this level by the Exo_ContactNodes.any File.
+      AnyFolder ContactNodesDrawSettings = {
+        AnyFloat RGB = ..ContactNodesDrawSettings.RGB;
+        AnyVar Opacity = ..ContactNodesDrawSettings.Opacity;
+        AnyFloat ScaleXYZ = ..ContactNodesDrawSettings.ScaleXYZ;
+        AnySwitchVar Visible = ..ContactNodesDrawSettings.Visible;
+        AnySwitchVar VisibleKeyNodes = ..ContactNodesDrawSettings.VisibleKeyNodes;
+      };
+      
+      ExoRefNode = {
+        #include "RShank_ConPlanes.any"
+        #include "RShank_ConNodes.any"
+        AnyRefNode ShankAxis =
+        {
+          sRel={-0.4496297414, 0.2483608539, -0.1774963796};
+          ARel={ {0, -1, 0}, {-1, 0, 2.050762857e-15}, {-2.050762857e-15, -0, -1} };
+          AnyDrawRefFrame drw_node =
+          {
+            RGB = {0.7921568627, 0.8196078431, 0.9333333333};
+            Opacity = 1;
+            ScaleXYZ = {0, 0, 0.203014031};
+            Visible = On;
+          };
+          AnyRefNode CenNode = {
+            sRel = {0, 0, 0.200/2}; 
+            ARel = RotMat(pi,y);
+            AnyDrawRefFrame drw ={Visible = ....ContactNodesDrawSettings.VisibleKeyNodes; RGB={0,0.8,0.8}; ScaleXYZ={0.4,0.4,0.4};};
+          }; // Cen Node
+        }; // Shank Axis
+      }; // Exo Ref Node
+      
+      KneeJoint = {
+        AnyRefNode KneeNodeRotated = {
+          ARel = RotMat(-pi/2,x); 
+          AnyDrawRefFrame drw = {Visible = ...ContactNodesDrawSettings.VisibleKeyNodes; RGB={0,0.8,0.8}; ScaleXYZ={0.3,0.3,0.3};};
+        };
+      };
+      
+      AnkleJoint = {
+        AnyRefNode AnkleJointRotated = {
+          ARel = RotMat(-pi/2,x); 
+          AnyDrawRefFrame drw = {Visible = ...ContactNodesDrawSettings.VisibleKeyNodes; RGB={0,0.8,0.8}; ScaleXYZ={0.3,0.3,0.3};};
+        };
+      };
+    }; // Shank
+    
+    Foot = {
+      
+      // Draw settings are needed at this level by the Exo_ContactNodes.any File.
+      AnyFolder ContactNodesDrawSettings = {
+        AnyFloat RGB = ..ContactNodesDrawSettings.RGB;
+        AnyVar Opacity = ..ContactNodesDrawSettings.Opacity;
+        AnyFloat ScaleXYZ = ..ContactNodesDrawSettings.ScaleXYZ;
+        AnySwitchVar Visible = ..ContactNodesDrawSettings.Visible;
+        AnySwitchVar VisibleKeyNodes = ..ContactNodesDrawSettings.VisibleKeyNodes;
+      };
+      
+      ExoRefNode = {
+        #include "RFoot_ConNodes.any"
+        AnyRefNode CS_CenterBase = {
+          sRel={-0.2014139633, 0.1241688497, 0.0029252};
+          ARel={ {-1e-15, -1, -1e-15}, {1, -1e-15, -0}, {-1e-30, -1e-15, 1} };
+          AnyDrawRefFrame drw_node = {
+            RGB = ...ContactNodesDrawSettings.RGB;
+            Opacity = ...ContactNodesDrawSettings.Opacity;
+            ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+            Visible = ...ContactNodesDrawSettings.Visible;
+          };
+        };
+        AnyRefNode GroundJointRotated = {
+          sRel = .CS_CenterBase.sRel;
+          ARel = .CS_CenterBase.ARel;
+          AnyDrawRefFrame drw = {Visible = ...ContactNodesDrawSettings.VisibleKeyNodes;};
+        };
+      }; // ExoRefNode
+      
+      GroundJoint = {
+        AnyRefNode GroundJointRotated = {
+          ARel = { {0, 1, 0}, {0, 0, 1}, {1, 0, 0} } * RotMat(pi/2,z); 
+          AnyDrawRefFrame drw = {Visible = ...ContactNodesDrawSettings.VisibleKeyNodes; RGB={0,0.8,0.8}; ScaleXYZ={0.3,0.3,0.3};};
+        };
+      };       
+    }; // Foot
+    
+    Talus = {      
+      AnkleJoint = {
+        AnyRefNode AnkleJointRotated = {
+          ARel = RotMat(-pi/2,x); 
+          AnyDrawRefFrame drw = {Visible = ....ContactNodesDrawSettings.VisibleKeyNodes; RGB={0,0.8,0.8}; ScaleXYZ={0.3,0.3,0.3};}; 
+        };
+      };      
+    }; // Talus
+    
+  }; // Human
+
+}; // Right

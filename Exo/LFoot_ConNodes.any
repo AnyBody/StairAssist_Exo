@@ -1,0 +1,216 @@
+AnyRefNode ConNode01 =
+{
+  sRel={0.0374293586, 0.0851522241, 0.01649388736};
+  ARel={ {-0.01711590381, 0.2120426654, -0.9771105126}, {0.003713751042, 0.9772604095, 0.2120101412}, {0.9998466152, -1.734723476e-18, -0.01751416884} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode02 =
+{
+  sRel={0.04257326493, 0.1085429118, 0.01266259158};
+  ARel={ {-0.02940204191, 0.2100771053, -0.9772426156}, {0.006317675924, 0.9776848213, 0.2099820877}, {0.9995477012, -8.67361738e-19, -0.03007312917} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode03 =
+{
+  sRel={0.04771717127, 0.1319335994, 0.008831295788};
+  ARel={ {-0.05074781923, 0.2066582398, -0.9770962239}, {0.01071884056, 0.9784131908, 0.206380073}, {0.9986539768, 0, -0.05186747246} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode04 =
+{
+  sRel={0.03021401841, 0.08578348457, 0.042};
+  ARel={ {-0.5108970424, 0.05053131432, -0.8581554628}, {0.02584932213, 0.9987224771, 0.04341919244}, {0.8592531784, -6.938893904e-18, -0.5115505599} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode05 =
+{
+  sRel={0.03527255139, 0.1091816414, 0.0355};
+  ARel={ {-0.5029296174, 0.05391930596, -0.8626439059}, {0.02715712148, 0.9985452961, 0.04658092214}, {0.8639006255, -4.510281038e-17, -0.5036622968} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode06 =
+{
+  sRel={0.04033108438, 0.1325797983, 0.029};
+  ARel={ {-0.4951587191, 0.05716915056, -0.8669195644}, {0.02835417643, 0.9983645067, 0.04964224466}, {0.8683397282, 0, -0.4959698745} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode07 =
+{
+  sRel={0.01029012445, 0.08752659942, 0.0575};
+  ARel={ {-0.9578268378, 2.081668171e-17, -0.2873460437}, {0.04717545831, 0.9864309847, -0.1572526264}, {0.2834470408, -0.1641764672, -0.9448300708} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode08 =
+{
+  sRel={0.01385436539, 0.1110554899, 0.0525};
+  ARel={ {-0.9422144074, 5.551115123e-17, -0.3350104632}, {0.05227526081, 0.9877506294, -0.1470237777}, {0.3309067959, -0.156040681, -0.930672874} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode09 =
+{
+  sRel={0.01741860632, 0.1345843804, 0.0475};
+  ARel={ {-0.9282244707, 3.469446952e-17, -0.3720206069}, {0.05558241185, 0.9887758115, -0.1386830565}, {0.3678449774, -0.1494068093, -0.9178059043} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode10 =
+{
+  sRel={-0.01548641336, 0.08978175427, 0.057875};
+  ARel={ {-0.9722456219, -6.938893904e-18, 0.2339624987}, {-0.04626392027, 0.9802543523, -0.1922525797}, {-0.2293427576, -0.1977407513, -0.9530480024} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode11 =
+{
+  sRel={-0.01478623218, 0.1135612175, 0.05325};
+  ARel={ {-0.963952384, 2.775557562e-17, 0.266074804}, {-0.05288055194, 0.9800516055, -0.1915789595}, {-0.2607670389, -0.1987431773, -0.9447230816} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode12 =
+{
+  sRel={-0.014086051, 0.1373406807, 0.048625};
+  ARel={ {-0.9564546748, 3.469446952e-17, 0.291880892}, {-0.05825029247, 0.9798838354, -0.1908784236}, {-0.2860093679, -0.1995687079, -0.9372144751} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode13 =
+{
+  sRel={-0.03503673432, 0.09149218572, 0.043875};
+  ARel={ {-0.535041413, 0.06357471795, 0.8424303779}, {0.03408405619, 0.9979770815, -0.05366583527}, {-0.8441380002, -1.387778781e-17, -0.5361259521} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode14 =
+{
+  sRel={-0.03645346687, 0.1154568549, 0.03925};
+  ARel={ {-0.6072586256, 0.08957538462, 0.7894385424}, {0.05461497467, 0.9959800452, -0.07099967655}, {-0.7926248584, 2.081668171e-17, -0.6097096307} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode15 =
+{
+  sRel={-0.03787019942, 0.1394215241, 0.034625};
+  ARel={ {-0.6756709117, 0.1206139498, 0.7272696159}, {0.08209467049, 0.9926994888, -0.08836396304}, {-0.7326181025, -2.775557562e-17, -0.6806399311} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode16 =
+{
+  sRel={-0.04306636017, 0.09219468695, 0.01984084994};
+  ARel={ {-0.09542475721, -0.08717052016, 0.9916125333}, {-0.008350010831, 0.9961934051, 0.08676967733}, {-0.995401624, 3.469446952e-18, -0.09578938861} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode17 =
+{
+  sRel={-0.04529323221, 0.1162302342, 0.01856056663};
+  ARel={ {-0.1222945742, -0.08572003612, 0.9887851701}, {-0.01052182337, 0.9963192638, 0.08507182745}, {-0.9924380728, -5.204170428e-18, -0.1227463712} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};
+AnyRefNode ConNode18 =
+{
+  sRel={-0.04752010426, 0.1402657814, 0.01728028331};
+  ARel={ {-0.1643050947, -0.08342176853, 0.9828757014}, {-0.01375456547, 0.9965143293, 0.08228003034}, {-0.986313666, 5.204170428e-18, -0.1648798115} }*RotMat(pi,z);
+  AnyDrawRefFrame drw_node =
+  {
+    RGB = ...ContactNodesDrawSettings.RGB;
+    Opacity = ...ContactNodesDrawSettings.Opacity;
+    ScaleXYZ = ...ContactNodesDrawSettings.ScaleXYZ;
+    Visible = ...ContactNodesDrawSettings.Visible;
+  };
+};

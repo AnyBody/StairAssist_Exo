@@ -1,0 +1,3876 @@
+// Same as the original code "FootPlateConditionalContact.any" except updated code for: 
+// 1. SHOW_TRIGGER_VOLUME --> Now refers to conditional contact node 0 (which refers to the
+//   central contact node in ExoLegNodes and the single node on thigh
+// 2. Create a Switch for Show Resultant Force in the settings of cond contact class template
+//   Default value is ON --> needed to switch off resultant force for Exo Sub reaction forces. 
+//   Controls visibility of GRF_line and GRF_point
+// 3. Create separate XYZ values of FGlobal --> To facilitate AnySearchFun needed at Exo Sub
+//   interface and combine the results manually.
+
+#include "Exo_ConditionalContactDistanceAndVelocityDepClass.any"
+#include "CreateSingleNode.any"
+
+/* Class template: Exo_ConditionalContact 
+ 
+
+   Class arguments:
+   ----------
+   PLATE_BASE_FRAME:
+           Is a AnyRefFrame object on the exo where the contact should be detected.
+   NORMAL_DIRECTION:
+           Defines the normal direction of the contact detection zone in 
+           the PLATE_BASE_FRAME coordinate system.
+   NODES_BASE_FOLDER :
+           The folder where all contact nodes are located below.
+           contact nodes must be AnyRefNodes named must be named Node#
+           where # is a number. Eg. Node1 ...Node24
+   NUMBER_OF_NODES: 
+           The number of contact nodes to expect within NODE_BASE_FRAME
+   SHOW_TRIGGER_VOLUME:
+           Visualize the volume where contacts may be triggered.
+   GLOBAL_REF: 
+           The global reference. This must be set if the global reference is not
+           Main.EnvironmentModel.GlobalRef
+   
+   Optional initialization:
+   ------------------------
+   Settings
+    .LimitDistLow                : 
+    .LimitDistHigh               :
+    .LimitVelHigh                :
+    .Strength                    :
+    .FrictionCoefficient         :
+    .ScaleFactor                 :
+    .ForceVectorDrawScaleFactor  :
+   
+    
+    
+  FootPlateConditionalContact <Object_name>(
+       NORMAL_DIRECTION     = "<X|Y|*Z>", 
+       NUMBER_OF_NODES      = [*1..200],
+       NODES_BASE_FOLDER    = <AnyFolder> ,
+       PLATE_BASE_FRAME     = <AnyRefFrame>,
+       SHOW_TRIGGER_VOLUME = [*0|1] ) =
+  {
+    Settings =
+    {
+      [ LimitDistLow = -0.10;               ]   
+      [ LimitDistHigh = 0.04;               ]
+      [ LimitVelHigh = 0.8;                 ]
+      [ GroundVelocity = {0.0, 0.0, 0.0};   ]
+      [ Strength = 200;                     ]
+      [ FrictionCoefficient = 0.5;          ]
+      [ ScaleFactor = 1;                    ]
+      [ ForceVectorDrawScaleFactor = 0.0005;] 
+    };
+    
+    CreateSingleContactNode Nodes(human_ref = Main.HumanModel.BodyModel.Right.Leg.Seg.Foot) = {  };
+  }; 
+   
+
+*/
+
+#class_template Exo_ConditionalContact (
+NORMAL_DIRECTION = "Z",
+NUMBER_OF_NODES = 1,
+NODES_FOLDER = Nodes,
+PLATE_BASE_FRAME = Main.EnvironmentModel.GlobalRef,
+SHOW_TRIGGER_VOLUME = 0,
+GLOBAL_REF = Main.EnvironmentModel.GlobalRef
+)
+{
+  
+  AnyFolder &NodesBaseFolder = NODES_FOLDER ;
+  AnyFolder &PlateBaseFrame = PLATE_BASE_FRAME ;
+    
+  AnyFolder Nodes = {};
+  
+  AnyFolder Settings = {
+    #var AnyVar LimitDistLow = DesignVar(-0.10);
+    #var AnyVar LimitDistHigh = DesignVar(0.04);
+    #var AnyVar LimitVelHigh = DesignVar(0.8);
+    #var AnyVar Radius = DesignVar(1000); ///< Set this very high to avoid it plate size to have an effect
+    #var AnyVar Strength = DesignVar(200);
+    #var AnyVar FrictionCoefficient = DesignVar(0.5);
+    #var AnyVar ScaleFactor = DesignVar(1);
+    #var AnyVar ForceVectorDrawScaleFactor = DesignVar(0.0005);
+    #var AnyVec3 GroundVelocity = {0, 0, 0};
+    #var AnySwitchVar ShowResultantForce = On; // Added later to control the visibility of Resultant Force. Default is visible (On). if Off, then invisible
+  };
+  
+  
+  
+  //-->Code for calculating COP
+  //#include "FootPlateConditionalContact_ForceMomentMeasure.any"
+  ForceMomentMeasure_multiple ForceMomentMeasure_Auto(NODES = NUMBER_OF_NODES ) = {};
+  
+  //  #include "FootPlateConditionalContact_ForceMomentMeasure_Manual.any"
+  //  
+  //  
+  AnyVar Fx = ForceMomentMeasure_Auto.Fx_On_Human;
+  AnyVar Fy = ForceMomentMeasure_Auto.Fy_On_Human;
+  AnyVar Fz = ForceMomentMeasure_Auto.Fz_On_Human;
+  AnyVar Mx = ForceMomentMeasure_Auto.Mx_On_Human;
+  AnyVar My = ForceMomentMeasure_Auto.My_On_Human;
+  AnyVar Mz = ForceMomentMeasure_Auto.Mz_On_Human;
+  
+  
+  
+  //  
+  #if NORMAL_DIRECTION == "X"
+  AnyVar Fxx =iffun(gtfun(abs(Fx),0.0), Fx, Fx+1e10);
+  AnyVar Rx = 0;
+  AnyVar Ry = -Mz/Fxx;
+  AnyVar Rz = My/Fxx;  
+  AnyVar OnOff = iffun(gtfun(abs(Fx), 10.0), 1.0, 0.0);
+  #endif
+  
+  #if NORMAL_DIRECTION == "Y"
+  AnyVar Fyy =iffun(gtfun(abs(Fy),0.0), Fy, Fy+1e10);
+  AnyVar Rx = Mz/Fyy;
+  AnyVar Ry = 0;
+  AnyVar Rz = -Mx/Fyy;
+  AnyVar OnOff = iffun(gtfun(abs(Fy), 10.0), 1.0, 0.0);
+  #endif    
+  
+  #if NORMAL_DIRECTION == "Z"
+  AnyVar Fzz =iffun(gtfun(abs(Fz),0.0), Fz, Fz+1e10);
+  AnyVar Rx = -My/Fzz;
+  AnyVar Ry = Mx/Fzz;
+  AnyVar Rz = 0;
+  //AnySwitch OnOff = iffun(gtfun(abs(Fz), 10.0), 1, 0);
+  AnyIntVar OnOff = iffun(gtfun(abs(Fz), 10.0), 1, 0) ;
+  #endif
+  
+  AnyFloat RGlobal = transf3D({Rx,Ry,Rz},&PlateBaseFrame);
+  AnyFloat FGlobal = {Fx,Fy,Fz}*PlateBaseFrame.Axes';
+  
+  AnyFloat FGlobalX = FGlobal[0];    // Added later to simplify AnySearchFun
+  AnyFloat FGlobalY = FGlobal[1];    // Added later to simplify AnySearchFun
+  AnyFloat FGlobalZ = FGlobal[2];    // Added later to simplify AnySearchFun
+
+  //  
+  AnyDrawLine GRF_line=
+  {
+    AnyRefFrame & ref = .PlateBaseFrame;
+    p0 = { .Rx, .Ry, .Rz};
+    p1 = p0 + 0.001 * {.Fx, .Fy, .Fz} ;
+    Line.Thickness = 0.01;
+    Line.RGB = {1, 0, 0};
+    GlobalCoord=Off;
+    //Visible = .OnOff_Val;
+    Visible = .Settings.ShowResultantForce; // Added later to control visibility. In any case, previous line was always commented out.
+    Opacity = .OnOff;
+  };
+  
+  AnyDrawSphere GRF_point = 
+  {
+    //AnyRefFrame & ref = ..PlateBaseFrame ;
+    Position = {.RGlobal[0], .RGlobal[1], .RGlobal[2]} ;
+    RGB = {0, 1, 1};
+    ScaleXYZ = 0.015*{1, 1, 1};
+    GlobalCoord = On;    
+    //Visible = ..OnOff_Val ;
+    Visible = .Settings.ShowResultantForce; // Added later to control visibility. In any case, previous line was always commented out.
+    Opacity = .OnOff;
+  };
+  
+                    
+  #if SHOW_TRIGGER_VOLUME == 1
+  AnyDrawLine DrawUpperTriggerVolume = 
+  {
+    AnyRefFrame & ref = .PlateBaseFrame;
+    AnyFloat projection = {{{0,0,0},{0,1,0}, {0,0,1}},
+                        {{1,0,0},{0,0,0}, {0,0,1}},
+                        {{1,0,0},{0,1,0}, {0,0,0}}};
+    AnyFunTransform3DLinRef GlobalToBaseFrame = {
+      Ref = &GLOBAL_REF;
+      RefTarget = &..PlateBaseFrame;
+    }; 
+    AnyVec3 PointPojectedOnBaseFrame = GlobalToBaseFrame(.Contacts.Contact0.TargetObject.r)*projection[.Contacts.NormalDir];
+    
+    p1 =  PointPojectedOnBaseFrame;
+    p0 =  PointPojectedOnBaseFrame + .Settings.LimitDistHigh*eye(3)[.Contacts.NormalDir];
+    #var Opacity = 0.05;
+    GlobalCoord = Off;
+    Pickable = On;
+    PickableZOrdering = -1;
+    Line = {
+        #var Thickness = 0.10;
+        #var RGB = {0.6, 0.6, 0.6};
+        Start.Style = Line3DCapStyleNone;
+        End.Style = Line3DCapStyleNone;
+        End.Thickness = Thickness;
+        Start.Thickness = Thickness;
+    };
+  };
+  AnyDrawLine DrawLowerTriggerVolume = 
+  {
+    AnyRefFrame & ref = .PlateBaseFrame;
+    AnyFloat projection = {{{0,0,0},{0,1,0}, {0,0,1}},
+                        {{1,0,0},{0,0,0}, {0,0,1}},
+                        {{1,0,0},{0,1,0}, {0,0,0}}};
+    p1 =  .DrawUpperTriggerVolume.PointPojectedOnBaseFrame + .Settings.LimitDistLow*eye(3)[.Contacts.NormalDir];
+    p0 =  .DrawUpperTriggerVolume.PointPojectedOnBaseFrame;
+    #var Opacity = 0.05;
+    GlobalCoord = Off;
+    Pickable = On;
+    PickableZOrdering = -1;
+    Line = {
+        #var Thickness = 0.10;
+        #var RGB = {0.6, 0.6, 0.6};
+        Start.Style = Line3DCapStyleDisk;
+        End.Style = Line3DCapStyleNone;
+        End.Thickness = Thickness;
+        Start.Thickness = Thickness;
+    };
+  };
+  #endif
+
+  
+  
+  //  //<--Code for calculationg COP
+  
+  AnyFolder Contacts = {
+    #if NORMAL_DIRECTION == "Z"
+    #var AnyInt NormalDir = 2;
+    #var AnyInt FrictionDir1 = 0;
+    #var AnyInt FrictionDir2 = 1;
+    #endif
+    
+    #if NORMAL_DIRECTION == "Y"
+    #var AnyInt NormalDir = 1;
+    #var AnyInt FrictionDir1 = 0;
+    #var AnyInt FrictionDir2 = 2;
+    #endif
+    
+    #if NORMAL_DIRECTION == "X"
+    #var AnyInt NormalDir = 0;
+    #var AnyInt FrictionDir1 = 1;
+    #var AnyInt FrictionDir2 = 2;
+    #endif  
+    
+    #if NORMAL_DIRECTION != "X" & NORMAL_DIRECTION != "Y" & NORMAL_DIRECTION != "Z"
+    // Create a sensible error  
+    #endif  
+    
+    
+    // Create the first contact node. This is given the
+    // SHOW_TRIGGER_VOLUME option to create the drawing.
+    #if 0 < NUMBER_OF_NODES
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact0 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node0 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    
+    
+    #if NUMBER_OF_NODES > 1  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact1 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node1 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 2  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact2 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node2 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 3  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact3 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node3 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 4  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact4 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node4 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 5  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact5 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node5 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 6  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact6 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node6 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 7  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact7 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node7 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 8  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact8 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node8 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 9  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact9 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node9 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 10  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact10 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node10 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 11  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact11 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node11 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 12  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact12 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node12 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 13  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact13 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node13 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 14  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact14 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node14 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 15  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact15 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node15 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 16  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact16 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node16 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 17  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact17 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node17 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 18  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact18 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node18 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 19  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact19 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node19 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 20  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact20 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node20 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 21  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact21 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node21 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 22  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact22 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node22 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 23  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact23 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node23 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 24  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact24 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node24 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 25  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact25 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node25 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 26  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact26 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node26 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 27  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact27 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node27 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 28  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact28 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node28 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 29  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact29 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node29 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 30  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact30 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node30 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 31  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact31 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node31 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 32  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact32 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node32 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 33  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact33 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node33 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 34  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact34 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node34 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 35  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact35 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node35 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 36  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact36 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node36 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 37  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact37 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node37 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 38  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact38 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node38 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 39  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact39 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node39 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 40  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact40 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node40 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 41  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact41 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node41 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 42  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact42 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node42 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 43  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact43 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node43 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 44  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact44 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node44 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 45  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact45 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node45 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 46  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact46 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node46 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 47  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact47 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node47 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 48  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact48 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node48 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 49  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact49 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node49 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 50  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact50 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node50 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 51  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact51 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node51 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 52  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact52 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node52 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 53  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact53 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node53 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 54  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact54 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node54 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 55  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact55 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node55 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 56  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact56 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node56 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 57  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact57 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node57 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 58  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact58 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node58 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 59  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact59 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node59 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 60  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact60 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node60 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 61  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact61 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node61 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 62  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact62 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node62 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 63  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact63 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node63 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 64  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact64 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node64 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 65  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact65 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node65 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 66  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact66 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node66 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 67  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact67 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node67 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 68  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact68 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node68 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 69  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact69 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node69 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 70  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact70 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node70 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 71  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact71 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node71 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 72  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact72 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node72 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 73  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact73 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node73 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 74  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact74 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node74 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 75  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact75 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node75 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 76  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact76 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node76 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 77  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact77 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node77 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 78  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact78 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node78 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 79  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact79 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node79 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 80  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact80 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node80 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 81  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact81 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node81 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 82  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact82 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node82 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 83  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact83 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node83 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 84  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact84 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node84 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 85  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact85 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node85 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 86  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact86 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node86 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 87  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact87 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node87 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 88  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact88 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node88 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 89  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact89 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node89 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 90  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact90 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node90 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 91  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact91 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node91 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 92  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact92 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node92 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 93  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact93 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node93 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 94  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact94 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node94 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 95  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact95 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node95 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 96  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact96 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node96 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 97  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact97 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node97 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 98  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact98 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node98 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 99  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact99 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node99 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 100  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact100 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node100 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 101  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact101 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node101 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 102  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact102 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node102 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 103  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact103 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node103 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 104  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact104 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node104 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 105  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact105 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node105 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 106  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact106 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node106 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 107  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact107 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node107 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 108  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact108 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node108 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 109  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact109 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node109 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 110  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact110 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node110 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 111  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact111 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node111 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 112  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact112 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node112 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 113  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact113 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node113 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 114  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact114 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node114 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 115  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact115 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node115 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 116  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact116 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node116 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 117  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact117 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node117 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 118  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact118 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node118 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 119  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact119 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node119 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 120  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact120 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node120 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 121  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact121 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node121 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 122  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact122 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node122 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 123  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact123 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node123 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 124  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact124 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node124 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 125  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact125 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node125 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 126  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact126 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node126 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 127  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact127 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node127 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 128  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact128 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node128 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 129  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact129 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node129 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 130  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact130 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node130 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 131  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact131 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node131 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 132  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact132 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node132 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 133  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact133 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node133 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 134  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact134 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node134 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 135  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact135 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node135 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 136  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact136 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node136 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 137  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact137 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node137 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 138  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact138 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node138 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 139  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact139 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node139 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 140  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact140 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node140 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 141  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact141 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node141 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 142  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact142 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node142 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 143  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact143 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node143 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 144  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact144 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node144 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 145  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact145 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node145 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 146  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact146 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node146 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 147  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact147 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node147 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 148  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact148 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node148 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 149  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact149 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node149 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 150  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact150 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node150 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 151  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact151 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node151 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 152  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact152 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node152 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 153  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact153 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node153 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 154  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact154 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node154 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 155  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact155 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node155 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 156  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact156 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node156 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 157  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact157 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node157 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 158  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact158 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node158 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 159  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact159 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node159 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 160  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact160 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node160 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 161  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact161 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node161 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 162  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact162 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node162 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 163  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact163 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node163 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 164  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact164 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node164 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 165  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact165 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node165 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 166  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact166 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node166 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 167  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact167 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node167 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 168  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact168 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node168 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 169  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact169 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node169 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 170  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact170 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node170 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 171  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact171 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node171 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 172  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact172 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node172 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 173  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact173 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node173 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 174  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact174 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node174 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 175  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact175 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node175 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 176  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact176 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node176 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 177  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact177 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node177 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 178  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact178 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node178 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 179  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact179 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node179 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 180  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact180 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node180 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 181  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact181 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node181 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 182  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact182 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node182 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 183  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact183 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node183 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 184  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact184 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node184 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 185  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact185 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node185 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 186  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact186 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node186 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 187  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact187 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node187 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 188  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact188 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node188 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 189  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact189 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node189 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 190  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact190 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node190 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 191  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact191 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node191 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 192  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact192 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node192 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 193  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact193 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node193 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 194  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact194 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node194 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 195  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact195 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node195 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 196  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact196 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node196 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 197  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact197 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node197 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 198  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact198 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node198 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    #if NUMBER_OF_NODES > 199  
+    Exo_ConditionalContactDistanceAndVelocityDepClass Contact199 (
+    BaseObject = ..PlateBaseFrame ,
+    TargetObject = ..NodesBaseFolder.Node199 ) = 
+    {
+      UserDefinedDistLimitLow = ..Settings.LimitDistLow;
+      UserDefinedDistLimitHigh = ..Settings.LimitDistHigh; 
+      UserDefinedRadiusLimit = ..Settings.Radius;
+      UserDefinedVelLimitHigh = ..Settings.LimitVelHigh; 
+      UserDefinedGroundVel = ..Settings.GroundVelocity; 
+      Strength = ..Settings.Strength ;  
+      StaticFrictionCoefficient = ..Settings.FrictionCoefficient; 
+      NormalDirection = .NormalDir;
+      FrictionDirection1 = .FrictionDir1;
+      FrictionDirection2 = .FrictionDir2;
+    };
+    #endif
+    
+    
+    
+  };
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+};

@@ -1,0 +1,283 @@
+// These are selected results that are to be exported. They have  final values only and broken down for coordinates. Do Not add classes here
+
+
+// INTERFACE RESULTS LEFT
+
+// Thigh
+AnyFolder _LThigh_ = {
+  
+  AnyFolder CombinedForce_CenThigh_ = { // Force on Human
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Left.Resultant.Thigh.ThighResultantForceMoments.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Left.Resultant.Thigh.ThighResultantForceMoments.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Left.Resultant.Thigh.ThighResultantForceMoments.FLocal[2];
+    
+    AnyFloat FLocal_XYZ_N = Main.ExoV2.Interface_Left.Resultant.Thigh.ThighResultantForceMoments.FLocalRes;
+    AnyFloat FLocal_XY_N = Main.ExoV2.Interface_Left.Resultant.Thigh.ThighResultantForceMoments.FLocalResXY;
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Left.Resultant.Thigh.ThighResultantForceMoments.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Left.Resultant.Thigh.ThighResultantForceMoments.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Left.Resultant.Thigh.ThighResultantForceMoments.MLocal[2];
+  };  
+  
+  AnyFolder InterfaceForceElements_ = {
+    AnyFloat Thigh_Strength_N = Main.ExoV2.Interface_Left.Resultant.Thigh.InterfaceForceElements.Strength_Thigh + 0*Main.Studies.InverseDynamicStudy.t;
+    AnyFloat Combined_MaxActivity = 100*Main.ExoV2.Interface_Left.Resultant.Thigh.InterfaceForceElements.MaxActivityThigh;
+  };
+  
+  AnyFolder ExoAssistanceAtCentre_ = {
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Left.Resultant.Thigh.ExoAssistanceResultant.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Left.Resultant.Thigh.ExoAssistanceResultant.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Left.Resultant.Thigh.ExoAssistanceResultant.FLocal[2];
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Left.Resultant.Thigh.ExoAssistanceResultant.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Left.Resultant.Thigh.ExoAssistanceResultant.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Left.Resultant.Thigh.ExoAssistanceResultant.MLocal[2];
+  };
+  
+  AnyFolder InterfaceMinusExoAssistance_ = {
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Left.Resultant.Thigh.ResultantMinusExoAssistance.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Left.Resultant.Thigh.ResultantMinusExoAssistance.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Left.Resultant.Thigh.ResultantMinusExoAssistance.FLocal[2];
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Left.Resultant.Thigh.ResultantMinusExoAssistance.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Left.Resultant.Thigh.ResultantMinusExoAssistance.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Left.Resultant.Thigh.ResultantMinusExoAssistance.MLocal[2];
+  };          
+  
+}; // Thigh
+
+// Shank
+AnyFolder _LShank_ = {
+    
+  AnyFolder CombinedForce_CenShank_ = { // Force on Human
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Left.Resultant.Shank.ShankResultantForceMoments.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Left.Resultant.Shank.ShankResultantForceMoments.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Left.Resultant.Shank.ShankResultantForceMoments.FLocal[2];
+    
+    AnyFloat FLocal_XYZ_N = Main.ExoV2.Interface_Left.Resultant.Shank.ShankResultantForceMoments.FLocalRes;
+    AnyFloat FLocal_XY_N = Main.ExoV2.Interface_Left.Resultant.Shank.ShankResultantForceMoments.FLocalResXY;
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Left.Resultant.Shank.ShankResultantForceMoments.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Left.Resultant.Shank.ShankResultantForceMoments.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Left.Resultant.Shank.ShankResultantForceMoments.MLocal[2];
+  };
+    
+  AnyFolder InterfaceForceElements_ = {
+    AnyFloat Shank_Strength_N = Main.ExoV2.Interface_Left.Resultant.Shank.InterfaceForceElements.Strength_Shank + 0*Main.Studies.InverseDynamicStudy.t;
+    AnyFloat Combined_MaxActivity = 100*Main.ExoV2.Interface_Left.Resultant.Shank.InterfaceForceElements.MaxActivityShank;
+  };
+  
+  AnyFolder ExoAssistanceAtCentre_ = {
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Left.Resultant.Shank.ExoAssistanceResultant.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Left.Resultant.Shank.ExoAssistanceResultant.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Left.Resultant.Shank.ExoAssistanceResultant.FLocal[2];
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Left.Resultant.Shank.ExoAssistanceResultant.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Left.Resultant.Shank.ExoAssistanceResultant.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Left.Resultant.Shank.ExoAssistanceResultant.MLocal[2];
+  };
+  
+  AnyFolder InterfaceMinusExoAssistance_ = {
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Left.Resultant.Shank.ResultantMinusExoAssistance.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Left.Resultant.Shank.ResultantMinusExoAssistance.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Left.Resultant.Shank.ResultantMinusExoAssistance.FLocal[2];
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Left.Resultant.Shank.ResultantMinusExoAssistance.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Left.Resultant.Shank.ResultantMinusExoAssistance.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Left.Resultant.Shank.ResultantMinusExoAssistance.MLocal[2];
+  };          
+  
+}; // Shank
+
+// Foot
+AnyFolder _LFoot_ = {  
+  
+  AnyFolder CombinedForce_CenFootBase_ = { // Force on Human
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootResultantForceMoments.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootResultantForceMoments.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootResultantForceMoments.FLocal[2];
+    
+    AnyFloat FLocal_XYZ_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootResultantForceMoments.FLocalRes;
+    AnyFloat FLocal_XY_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootResultantForceMoments.FLocalResXY;
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Left.Resultant.Foot.FootResultantForceMoments.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Left.Resultant.Foot.FootResultantForceMoments.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Left.Resultant.Foot.FootResultantForceMoments.MLocal[2];
+  };
+  
+  AnyFolder BaseForce_CenFootBase_ = { // Force on Human
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootBaseResultantForceMoments.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootBaseResultantForceMoments.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootBaseResultantForceMoments.FLocal[2];
+    
+    AnyFloat FLocal_XYZ_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootBaseResultantForceMoments.FLocalRes;
+    AnyFloat FLocal_XY_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootBaseResultantForceMoments.FLocalResXY;
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Left.Resultant.Foot.FootBaseResultantForceMoments.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Left.Resultant.Foot.FootBaseResultantForceMoments.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Left.Resultant.Foot.FootBaseResultantForceMoments.MLocal[2];
+  };
+  
+  AnyFolder StrapForce_CenFootBase_ = { // Force on Human
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootStrapResultantForceMoments.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootStrapResultantForceMoments.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootStrapResultantForceMoments.FLocal[2];
+    
+    AnyFloat FLocal_XYZ_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootStrapResultantForceMoments.FLocalRes;
+    AnyFloat FLocal_XY_N = Main.ExoV2.Interface_Left.Resultant.Foot.FootStrapResultantForceMoments.FLocalResXY;
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Left.Resultant.Foot.FootStrapResultantForceMoments.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Left.Resultant.Foot.FootStrapResultantForceMoments.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Left.Resultant.Foot.FootStrapResultantForceMoments.MLocal[2];
+  };
+  
+  AnyFolder InterfaceForceElements_ = {
+    AnyFloat FootBase_Strength_N = Main.ExoV2.Interface_Left.Resultant.Foot.InterfaceForceElements.Strength_FootBase + 0*Main.Studies.InverseDynamicStudy.t;
+    AnyFloat FootStrap_Strength_N = Main.ExoV2.Interface_Left.Resultant.Foot.InterfaceForceElements.Strength_FootStrap + 0*Main.Studies.InverseDynamicStudy.t;
+    AnyFloat FootBase_MaxActivity = 100*Main.ExoV2.Interface_Left.Resultant.Foot.InterfaceForceElements.MaxActivityFootBase;
+    AnyFloat FootStrap_MaxActivity = 100*Main.ExoV2.Interface_Left.Resultant.Foot.InterfaceForceElements.MaxActivityFootStrap;
+  };
+  
+}; // Foot
+
+
+
+// INTERFACE RESULTS RIGHT
+
+// Thigh
+AnyFolder _RThigh_ = {
+  
+  AnyFolder CombinedForce_CenThigh_ = { // Force on Human
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Right.Resultant.Thigh.ThighResultantForceMoments.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Right.Resultant.Thigh.ThighResultantForceMoments.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Right.Resultant.Thigh.ThighResultantForceMoments.FLocal[2];
+    
+    AnyFloat FLocal_XYZ_N = Main.ExoV2.Interface_Right.Resultant.Thigh.ThighResultantForceMoments.FLocalRes;
+    AnyFloat FLocal_XY_N = Main.ExoV2.Interface_Right.Resultant.Thigh.ThighResultantForceMoments.FLocalResXY;
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Right.Resultant.Thigh.ThighResultantForceMoments.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Right.Resultant.Thigh.ThighResultantForceMoments.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Right.Resultant.Thigh.ThighResultantForceMoments.MLocal[2];
+  };  
+  
+  AnyFolder InterfaceForceElements_ = {
+    AnyFloat Thigh_Strength_N = Main.ExoV2.Interface_Right.Resultant.Thigh.InterfaceForceElements.Strength_Thigh + 0*Main.Studies.InverseDynamicStudy.t;
+    AnyFloat Combined_MaxActivity = 100*Main.ExoV2.Interface_Right.Resultant.Thigh.InterfaceForceElements.MaxActivityThigh;
+  };
+  
+  AnyFolder ExoAssistanceAtCentre_ = {
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Right.Resultant.Thigh.ExoAssistanceResultant.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Right.Resultant.Thigh.ExoAssistanceResultant.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Right.Resultant.Thigh.ExoAssistanceResultant.FLocal[2];
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Right.Resultant.Thigh.ExoAssistanceResultant.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Right.Resultant.Thigh.ExoAssistanceResultant.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Right.Resultant.Thigh.ExoAssistanceResultant.MLocal[2];
+  };
+  
+  AnyFolder InterfaceMinusExoAssistance_ = {
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Right.Resultant.Thigh.ResultantMinusExoAssistance.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Right.Resultant.Thigh.ResultantMinusExoAssistance.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Right.Resultant.Thigh.ResultantMinusExoAssistance.FLocal[2];
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Right.Resultant.Thigh.ResultantMinusExoAssistance.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Right.Resultant.Thigh.ResultantMinusExoAssistance.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Right.Resultant.Thigh.ResultantMinusExoAssistance.MLocal[2];
+  };          
+  
+}; // Thigh
+
+// Shank
+AnyFolder _RShank_ = {
+    
+  AnyFolder CombinedForce_CenShank_ = { // Force on Human
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Right.Resultant.Shank.ShankResultantForceMoments.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Right.Resultant.Shank.ShankResultantForceMoments.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Right.Resultant.Shank.ShankResultantForceMoments.FLocal[2];
+    
+    AnyFloat FLocal_XYZ_N = Main.ExoV2.Interface_Right.Resultant.Shank.ShankResultantForceMoments.FLocalRes;
+    AnyFloat FLocal_XY_N = Main.ExoV2.Interface_Right.Resultant.Shank.ShankResultantForceMoments.FLocalResXY;
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Right.Resultant.Shank.ShankResultantForceMoments.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Right.Resultant.Shank.ShankResultantForceMoments.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Right.Resultant.Shank.ShankResultantForceMoments.MLocal[2];
+  };
+    
+  AnyFolder InterfaceForceElements_ = {
+    AnyFloat Shank_Strength_N = Main.ExoV2.Interface_Right.Resultant.Shank.InterfaceForceElements.Strength_Shank + 0*Main.Studies.InverseDynamicStudy.t;
+    AnyFloat Combined_MaxActivity = 100*Main.ExoV2.Interface_Right.Resultant.Shank.InterfaceForceElements.MaxActivityShank;
+  };
+  
+  AnyFolder ExoAssistanceAtCentre_ = {
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Right.Resultant.Shank.ExoAssistanceResultant.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Right.Resultant.Shank.ExoAssistanceResultant.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Right.Resultant.Shank.ExoAssistanceResultant.FLocal[2];
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Right.Resultant.Shank.ExoAssistanceResultant.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Right.Resultant.Shank.ExoAssistanceResultant.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Right.Resultant.Shank.ExoAssistanceResultant.MLocal[2];
+  };
+  
+  AnyFolder InterfaceMinusExoAssistance_ = {
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Right.Resultant.Shank.ResultantMinusExoAssistance.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Right.Resultant.Shank.ResultantMinusExoAssistance.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Right.Resultant.Shank.ResultantMinusExoAssistance.FLocal[2];
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Right.Resultant.Shank.ResultantMinusExoAssistance.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Right.Resultant.Shank.ResultantMinusExoAssistance.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Right.Resultant.Shank.ResultantMinusExoAssistance.MLocal[2];
+  };          
+  
+}; // Shank
+
+// Foot
+AnyFolder _RFoot_ = {  
+  
+  AnyFolder CombinedForce_CenFootBase_ = { // Force on Human
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootResultantForceMoments.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootResultantForceMoments.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootResultantForceMoments.FLocal[2];
+    
+    AnyFloat FLocal_XYZ_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootResultantForceMoments.FLocalRes;
+    AnyFloat FLocal_XY_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootResultantForceMoments.FLocalResXY;
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Right.Resultant.Foot.FootResultantForceMoments.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Right.Resultant.Foot.FootResultantForceMoments.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Right.Resultant.Foot.FootResultantForceMoments.MLocal[2];
+  };
+  
+  AnyFolder BaseForce_CenFootBase_ = { // Force on Human
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootBaseResultantForceMoments.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootBaseResultantForceMoments.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootBaseResultantForceMoments.FLocal[2];
+    
+    AnyFloat FLocal_XYZ_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootBaseResultantForceMoments.FLocalRes;
+    AnyFloat FLocal_XY_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootBaseResultantForceMoments.FLocalResXY;
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Right.Resultant.Foot.FootBaseResultantForceMoments.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Right.Resultant.Foot.FootBaseResultantForceMoments.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Right.Resultant.Foot.FootBaseResultantForceMoments.MLocal[2];
+  };
+  
+  AnyFolder StrapForce_CenFootBase_ = { // Force on Human
+    AnyFloat FLocal_X_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootStrapResultantForceMoments.FLocal[0];
+    AnyFloat FLocal_Y_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootStrapResultantForceMoments.FLocal[1];
+    AnyFloat FLocal_Z_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootStrapResultantForceMoments.FLocal[2];
+    
+    AnyFloat FLocal_XYZ_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootStrapResultantForceMoments.FLocalRes;
+    AnyFloat FLocal_XY_N = Main.ExoV2.Interface_Right.Resultant.Foot.FootStrapResultantForceMoments.FLocalResXY;
+    
+    AnyFloat MLocal_X_Nm = Main.ExoV2.Interface_Right.Resultant.Foot.FootStrapResultantForceMoments.MLocal[0];
+    AnyFloat MLocal_Y_Nm = Main.ExoV2.Interface_Right.Resultant.Foot.FootStrapResultantForceMoments.MLocal[1];
+    AnyFloat MLocal_Z_Nm = Main.ExoV2.Interface_Right.Resultant.Foot.FootStrapResultantForceMoments.MLocal[2];
+  };
+  
+  AnyFolder InterfaceForceElements_ = {
+    AnyFloat FootBase_Strength_N = Main.ExoV2.Interface_Right.Resultant.Foot.InterfaceForceElements.Strength_FootBase + 0*Main.Studies.InverseDynamicStudy.t;
+    AnyFloat FootStrap_Strength_N = Main.ExoV2.Interface_Right.Resultant.Foot.InterfaceForceElements.Strength_FootStrap + 0*Main.Studies.InverseDynamicStudy.t;
+    AnyFloat FootBase_MaxActivity = 100*Main.ExoV2.Interface_Right.Resultant.Foot.InterfaceForceElements.MaxActivityFootBase;
+    AnyFloat FootStrap_MaxActivity = 100*Main.ExoV2.Interface_Right.Resultant.Foot.InterfaceForceElements.MaxActivityFootStrap;
+  };
+  
+}; // Foot
+

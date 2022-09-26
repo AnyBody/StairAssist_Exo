@@ -1,0 +1,46 @@
+Main = {
+  
+  // Changes in EnvironmentModel - Add stairs
+  #include "Env.any"
+  
+  // Add Exoskeleton
+  #include "../Exo/Exo.any"
+  
+  // Include Code for exporting results
+  #include "CSV/ExportCSV.any"
+  
+  // Add Exoskeleton in Study
+  Studies.ParameterIdentification.KinematicStudyForParameterIdentification = {
+    AnyFolder Exoskeleton = {
+       AnyFolder& Left = Main.ExoV2.Left;
+       AnyFolder& Right = Main.ExoV2.Right;
+       AnyFolder& NodesOnHuman =Main.ExoV2.NodesOnHuman;
+    }; 
+  };
+  Studies.MarkerTracking = {
+    AnyFolder Exoskeleton = {
+      AnyFolder& Left = Main.ExoV2.Left;
+      AnyFolder& Right = Main.ExoV2.Right;
+      // Add weak drivers to help with marker dropouts
+      AnyFolder& NodesOnHuman =Main.ExoV2.NodesOnHuman;
+    };      
+  };
+  Studies.InverseDynamicStudy = {
+    AnyFolder& Exoskeleton = Main.ExoV2;
+    // Include output file
+    AnyFolder &Results = Main.Results;
+  };
+  
+  // Check if filename prefixes exist
+  #ifndef MOCAP_TEST_FILENAME_PREFIX
+  #define MOCAP_TEST_FILENAME_PREFIX ""
+  #endif
+
+  #ifndef MOCAP_OUTPUT_FILENAME_PREFIX
+  #define MOCAP_OUTPUT_FILENAME_PREFIX ""
+  #endif
+  
+  #include "LExo_IncludeInStudy.any"
+  #include "RExo_IncludeInStudy.any"
+  
+}; // Main

@@ -1,0 +1,51 @@
+name: Test Stair exo processing
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+concurrency: 
+  group: compare-test-${{  github.event.inputs.git_reference || github.ref }}
+  cancel-in-progress: true
+
+  
+jobs:
+  test:
+    name: Test batch processing
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        path: StairAssist_Exo
+
+    - name: Checkout AMMR
+      uses: actions/checkout@v3
+      with:
+        repository: AnyBody/ammr
+        ref: master
+        path: ammr
+        ssh-key: ${{ secrets.AMMR_DEPLOY_KEY }}
+
+    - name: Link AMMR
+      run: |
+          echo "#include \"ammr/libdef.any\"" > libdef.any
+
+    - name: Run AnyBody
+      uses: anybody/anybodycon-action@7.4.2
+      with:
+        license_server_password: ${{ secrets.LICENSE_PASSWORD }}
+        license_server: ${{ secrets.LICENSE_SERVER }}
+        run: |
+          cd StairAssist_Exo
+          python batchprocess.py
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: Batch processing logs
+        path: StairAssist_Exo/BatchProcessingLogs
